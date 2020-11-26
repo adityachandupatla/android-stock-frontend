@@ -1,14 +1,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.StockApplication" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.StockApplication" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/app_custom_color</item>
         <item name="colorPrimaryVariant">@color/app_custom_color</item>
-        <item name="colorOnPrimary">@color/app_custom_color</item>
+        <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/app_custom_color</item>
         <item name="colorSecondaryVariant">@color/app_custom_color</item>
-        <item name="colorOnSecondary">@color/app_custom_color</item>
+        <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
     </style>
@@ -16,6 +16,12 @@
     <!-- The launcher theme. It sets the main window background to the launch_screen drawable -->
     <style name="Theme.StockApplication.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
+
+    <style name="ActionBar.nameText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>
