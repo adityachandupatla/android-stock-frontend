@@ -8,4 +8,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="app_custom_color">#F2F2F4</color>
+    <color name="section_header_color">#E1E3E5</color>
+
+
+    <color name="trendingColor">#FF000000</color>
+    <color name="colorAccent">#FF000000</color>
+    <color name="sectionTabColor">#FF000000</color>
+    <color name="trendingSearch">#FF000000</color>
+
+    <color name="dateColor">#096e6a</color>
+
 </resources>

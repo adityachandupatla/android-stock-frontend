@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">Stocks</string>
+    <string name="portfolio_label">PORTFOLIO</string>
+    <string name="sample_networth_value">19450.26</string>
+    <string name="net_worth_label">Net Worth</string>
+
+    <string name="info">INFO</string>
+    <string name="item_info_title">[Section Item Info]</string>
+    <string name="pos_in_section">Position in section:</string>
+    <string name="pos_in_adapter">Position in adapter:</string>
+    <string name="view_type">View type:</string>
+    <string name="has_header">Has header?</string>
+    <string name="has_footer">Has footer?</string>
+    <string name="header_pos">"Header position:</string>
+    <string name="footer_pos">"Footer position:</string>
+    <string name="section_info_title">[Section Info]</string>
+    <string name="close">CLOSE</string>
+    <string name="sample_date_value">October 28, 2020</string>
+    <string name="sample_ticker">MSFT</string>
+    <string name="sample_stockprice">202.68</string>
+    <string name="sample_shares">8.0 shares</string>
+    <string name="sample_changepercentage">10.57</string>
+    <string name="favorite_label">FAVORITES</string>
 </resources>
