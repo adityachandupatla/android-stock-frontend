@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/app_custom_color"
-    android:padding="10dp">
+    android:padding="5dp">
 
 
     <ImageView
@@ -31,7 +31,7 @@
         android:id="@+id/ticker_fav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:text="@string/sample_ticker"
         android:textColor="@color/black"
@@ -67,7 +67,7 @@
         android:id="@+id/shares_fav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:text="@string/sample_shares"
         app:layout_constraintStart_toStartOf="parent"

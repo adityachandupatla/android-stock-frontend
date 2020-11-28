@@ -21,4 +21,7 @@
     <string name="sample_shares">8.0 shares</string>
     <string name="sample_changepercentage">10.57</string>
     <string name="favorite_label">FAVORITES</string>
+    <string name="tiingo_linktext">
+        &lt;a href="https://www.tiingo.com/">Powered by tiingo&lt;/a>
+    </string>
 </resources>
