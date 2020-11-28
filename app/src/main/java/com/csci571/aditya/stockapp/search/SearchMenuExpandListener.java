@@ -3,7 +3,8 @@ package com.csci571.aditya.stockapp.search;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.SearchView;
+
+import androidx.appcompat.widget.SearchView;
 
 public class SearchMenuExpandListener implements MenuItem.OnActionExpandListener {
 

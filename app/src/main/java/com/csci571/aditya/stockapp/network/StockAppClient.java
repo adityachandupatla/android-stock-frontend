@@ -9,9 +9,12 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.csci571.aditya.stockapp.favorite.Favorite;
 import com.csci571.aditya.stockapp.favorite.FavoriteSection;
+import com.csci571.aditya.stockapp.models.AutoSuggestModel;
+import com.csci571.aditya.stockapp.models.Suggestion;
 import com.csci571.aditya.stockapp.models.SummaryModel;
 import com.csci571.aditya.stockapp.portfolio.Portfolio;
 import com.csci571.aditya.stockapp.portfolio.PortfolioSection;
+import com.csci571.aditya.stockapp.search.AutoSuggestAdapter;
 import com.csci571.aditya.stockapp.utils.Constants;
 import com.csci571.aditya.stockapp.utils.Parser;
 import com.google.gson.Gson;
@@ -19,6 +22,7 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -110,6 +114,30 @@ public class StockAppClient {
                 }
             });
         }
+    }
+
+    public void fetchAutoSuggestData(String searchString, AutoSuggestAdapter autoSuggestAdapter) {
+        String url = host + String.format(Constants.AUTOCOMPLETE_ENDPOINT_TEMPLATE, searchString);
+        makeRequest(url, new VolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject result) throws JSONException {
+                AutoSuggestModel autoSuggestModel = new Gson().fromJson(result.toString(), AutoSuggestModel.class);
+                if (autoSuggestModel.isSuccess() && autoSuggestModel.getData().size() > 0) {
+                    List<String> data = new ArrayList<>();
+                    for (Suggestion suggestion: autoSuggestModel.getData()) {
+                        data.add(suggestion.getTicker() + " - " + suggestion.getName());
+                    }
+                    autoSuggestAdapter.setData(data);
+                    autoSuggestAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onError(String result) throws Exception {
+                Log.e(TAG, "Error occurred while making request to backend: ");
+                Log.e(TAG, result);
+            }
+        });
     }
 
     // Custom JSON Request Handler
