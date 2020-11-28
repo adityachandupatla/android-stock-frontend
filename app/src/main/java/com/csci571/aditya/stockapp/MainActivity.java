@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayout.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        enableSwipeToDelete();
+        enableSwipeDrag();
 
         ProgressBar progressBar = findViewById(R.id.progressBar);
         TextView loadingTextView = findViewById(R.id.loading_text);
@@ -136,8 +136,8 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         dialog.show(getSupportFragmentManager(), "EFGH");
     }
 
-    private void enableSwipeToDelete() {
-        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
+    private void enableSwipeDrag() {
+        SwipeDragCallback swipeDragCallback = new SwipeDragCallback(this) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
                 final int position = viewHolder.getAdapterPosition();
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
             }
         };
 
-        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeDragCallback);
         itemTouchhelper.attachToRecyclerView(recyclerView);
     }
 }
