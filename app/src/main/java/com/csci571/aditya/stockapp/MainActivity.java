@@ -87,12 +87,14 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         enableSwipeToDelete();
 
         ProgressBar progressBar = findViewById(R.id.progressBar);
+        TextView loadingTextView = findViewById(R.id.loading_text);
 
         recyclerView.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
+        loadingTextView.setVisibility(View.VISIBLE);
 
         StockAppClient.getInstance(getApplicationContext()).fetchHomeScreenData(tickerSet,
-                progressBar, recyclerView, sectionAdapter);
+                progressBar, loadingTextView, recyclerView, sectionAdapter);
 
     }
 

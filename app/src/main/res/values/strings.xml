@@ -24,4 +24,5 @@
     <string name="tiingo_linktext">
         &lt;a href="https://www.tiingo.com/">Powered by tiingo&lt;/a>
     </string>
+    <string name="loading_message">Fetching Data</string>
 </resources>

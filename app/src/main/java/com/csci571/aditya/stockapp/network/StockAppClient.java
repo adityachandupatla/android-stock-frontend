@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.csci571.aditya.stockapp.favorite.Favorite;
@@ -18,7 +19,6 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,7 +47,7 @@ public class StockAppClient {
         return mInstance;
     }
 
-    private void fillHomeScreen(ProgressBar progressBar, RecyclerView recyclerView,
+    private void fillHomeScreen(ProgressBar progressBar, TextView loadingTextView, RecyclerView recyclerView,
                                 SectionedRecyclerViewAdapter sectionAdapter, Map<String, Double> map) {
 
         PortfolioSection portfolioSection = (PortfolioSection) sectionAdapter.getSection(Constants.PORTFOLIO_SECTION_TAG);
@@ -78,11 +78,12 @@ public class StockAppClient {
         sectionAdapter.notifyDataSetChanged();
 
         progressBar.setVisibility(View.INVISIBLE);
+        loadingTextView.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.VISIBLE);
     }
 
     public void fetchHomeScreenData(HashSet<String> tickerSet, ProgressBar progressBar,
-                                    RecyclerView recyclerView, SectionedRecyclerViewAdapter sectionAdapter) {
+                                    TextView loadingTextView, RecyclerView recyclerView, SectionedRecyclerViewAdapter sectionAdapter) {
         Map<String, Double> map = new HashMap<>();
         final AtomicInteger requests = new AtomicInteger(tickerSet.size());
         for (String ticker: tickerSet) {
@@ -94,7 +95,7 @@ public class StockAppClient {
                     map.put(ticker, summaryModel.getLastPrice());
                     int status = requests.decrementAndGet();
                     if (status == 0) {
-                        fillHomeScreen(progressBar, recyclerView, sectionAdapter, map);
+                        fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map);
                     }
                 }
 
@@ -104,7 +105,7 @@ public class StockAppClient {
                     Log.e(TAG, result);
                     int status = requests.decrementAndGet();
                     if (status == 0) {
-                        fillHomeScreen(progressBar, recyclerView, sectionAdapter, map);
+                        fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map);
                     }
                 }
             });
