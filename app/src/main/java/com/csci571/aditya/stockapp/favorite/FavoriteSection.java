@@ -23,10 +23,19 @@ public class FavoriteSection extends Section {
         super(SectionParameters.builder()
                 .itemResourceId(R.layout.favorite_item)
                 .headerResourceId(R.layout.favorite_header)
+                .footerResourceId(R.layout.tiingo_footer)
                 .build());
 
         this.list = list;
         this.clickListener = clickListener;
+    }
+
+    public List<Favorite> getList() {
+        return list;
+    }
+
+    public void setList(List<Favorite> list) {
+        this.list = list;
     }
 
     @Override
@@ -39,8 +48,13 @@ public class FavoriteSection extends Section {
         return new ItemViewHolder(view);
     }
 
-    private String buildSharesText(double shares) {
-        return Parser.beautify(shares) + " shares";
+    private String buildSharesText(Favorite favorite) {
+        if (favorite.getShares() == 0) {
+            return favorite.getCompanyName();
+        }
+        else {
+            return Parser.beautify(favorite.getShares()) + " shares";
+        }
     }
 
     @Override
@@ -52,7 +66,7 @@ public class FavoriteSection extends Section {
         itemHolder.getTickerTextView().setText(favorite.getTicker());
 
         // TODO: Determine whether we need to display share value or company name
-        itemHolder.getInfoTextView().setText(buildSharesText(favorite.getShares()));
+        itemHolder.getInfoTextView().setText(buildSharesText(favorite));
 
         itemHolder.getStockPriceTextView().setText(Parser.beautify(favorite.getStockPrice()));
         itemHolder.getChangePercentageTextView().setText(Parser.beautify(favorite.getChangePercentage()));
@@ -61,20 +75,17 @@ public class FavoriteSection extends Section {
         if (favorite.getChange() == Change.SAME) {
             itemHolder.getChangeImageView().setVisibility(View.INVISIBLE);
             itemHolder.getChangePercentageTextView().setTextColor(Color.GRAY);
-        }
-        else {
+        } else {
             itemHolder.getChangeImageView().setVisibility(View.VISIBLE);
             itemHolder.getChangeImageView().setImageResource(favorite.getChangeImage());
             if (favorite.getChange() == Change.INCREASE) {
                 itemHolder.getChangePercentageTextView().setTextColor(Color.rgb(0, 179, 0));
-            }
-            else {
+            } else {
                 itemHolder.getChangePercentageTextView().setTextColor(Color.rgb(255, 0, 38));
             }
         }
 
-
-        itemHolder.getRootView().setOnClickListener(v ->
+        itemHolder.getDetailArrowImageView().setOnClickListener(v ->
                 clickListener.onItemRootViewClicked(this, itemHolder.getAdapterPosition())
         );
     }
@@ -82,6 +93,11 @@ public class FavoriteSection extends Section {
     @Override
     public RecyclerView.ViewHolder getHeaderViewHolder(final View view) {
         return new HeaderViewHolder(view);
+    }
+
+    @Override
+    public RecyclerView.ViewHolder getFooterViewHolder(final View view) {
+        return new FooterViewHolder(view);
     }
 
     public interface ClickListener {

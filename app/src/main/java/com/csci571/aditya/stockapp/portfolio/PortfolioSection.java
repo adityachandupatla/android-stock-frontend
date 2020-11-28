@@ -7,6 +7,7 @@ import com.csci571.aditya.stockapp.R;
 import com.csci571.aditya.stockapp.utils.Change;
 import com.csci571.aditya.stockapp.utils.Parser;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -30,6 +31,22 @@ public class PortfolioSection extends Section {
         this.netWorth = netWorth;
         this.list = list;
         this.clickListener = clickListener;
+    }
+
+    public String getNetWorth() {
+        return netWorth;
+    }
+
+    public void setNetWorth(String netWorth) {
+        this.netWorth = netWorth;
+    }
+
+    public List<Portfolio> getList() {
+        return list;
+    }
+
+    public void setList(List<Portfolio> list) {
+        this.list = list;
     }
 
     @Override
@@ -73,8 +90,7 @@ public class PortfolioSection extends Section {
             }
         }
 
-
-        itemHolder.getRootView().setOnClickListener(v ->
+        itemHolder.getDetailArrowImageView().setOnClickListener(v ->
                 clickListener.onItemRootViewClicked(this, itemHolder.getAdapterPosition())
         );
     }
@@ -88,6 +104,11 @@ public class PortfolioSection extends Section {
     public void onBindHeaderViewHolder(final RecyclerView.ViewHolder holder) {
         HeaderViewHolder headerHolder = (HeaderViewHolder) holder;
         headerHolder.getNetworthValueTextView().setText(netWorth);
+        LocalDateTime now = LocalDateTime.now();
+        String monthName = now.getMonth().toString();
+        String formattedMonth = monthName.substring(0, 1).toUpperCase() + monthName.substring(1).toLowerCase();
+        String dateText = formattedMonth + " " + now.getDayOfMonth() + ", " + now.getYear();
+        headerHolder.getDateTextView().setText(dateText);
     }
 
     public interface ClickListener {

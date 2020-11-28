@@ -11,18 +11,25 @@ public class Portfolio {
     private double stockPrice;
     private double changePercentage;
     private Change change;
+    private double totalAmountOwned;
 
     @DrawableRes
     private int detailArrowImage;
     @DrawableRes
     private int changeImage;
 
-
-    public Portfolio(String ticker, double shares, double stockPrice, double changePercentage) {
+    public Portfolio(String ticker, double shares, double stockPrice, double changePercentage, double totalAmountOwned) {
         this.ticker = ticker;
         this.shares = shares;
+        this.totalAmountOwned = totalAmountOwned;
         this.stockPrice = stockPrice;
         this.changePercentage = changePercentage;
+        this.change = Change.SAME;
+        this.changeImage = -1;
+        this.detailArrowImage = R.drawable.ic_baseline_keyboard_arrow_right_24;
+    }
+
+    public void updateChangeImage() {
         if (changePercentage > 0) {
             this.change = Change.INCREASE;
             this.changeImage = R.drawable.ic_twotone_trending_up_24;
@@ -30,12 +37,12 @@ public class Portfolio {
         else if (changePercentage < 0) {
             this.change = Change.DECREASE;
             this.changeImage = R.drawable.ic_baseline_trending_down_24;
+            this.changePercentage *= -1;
         }
         else {
             this.change = Change.SAME;
             this.changeImage = -1;
         }
-        this.detailArrowImage = R.drawable.ic_baseline_keyboard_arrow_right_24;
     }
 
     public String getTicker() {
@@ -92,5 +99,27 @@ public class Portfolio {
 
     public void setChangeImage(int changeImage) {
         this.changeImage = changeImage;
+    }
+
+    public double getTotalAmountOwned() {
+        return totalAmountOwned;
+    }
+
+    public void setTotalAmountOwned(double totalAmountOwned) {
+        this.totalAmountOwned = totalAmountOwned;
+    }
+
+    @Override
+    public String toString() {
+        return "Portfolio{" +
+                "ticker='" + ticker + '\'' +
+                ", shares=" + shares +
+                ", stockPrice=" + stockPrice +
+                ", changePercentage=" + changePercentage +
+                ", change=" + change +
+                ", totalAmountOwned=" + totalAmountOwned +
+                ", detailArrowImage=" + detailArrowImage +
+                ", changeImage=" + changeImage +
+                '}';
     }
 }

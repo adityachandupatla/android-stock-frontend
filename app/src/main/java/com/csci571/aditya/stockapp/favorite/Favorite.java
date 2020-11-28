@@ -12,6 +12,7 @@ public class Favorite {
     private double stockPrice;
     private double changePercentage;
     private Change change;
+    private double lastPrice;
 
     @DrawableRes
     private int detailArrowImage;
@@ -19,12 +20,20 @@ public class Favorite {
     private int changeImage;
 
 
-    public Favorite(String ticker, double shares, String companyName, double stockPrice, double changePercentage) {
+    public Favorite(String ticker, double shares, String companyName, double stockPrice, double changePercentage,
+                    double lastPrice) {
         this.ticker = ticker;
         this.shares = shares;
         this.companyName = companyName;
         this.stockPrice = stockPrice;
         this.changePercentage = changePercentage;
+        this.lastPrice = lastPrice;
+        this.change = Change.SAME;
+        this.changeImage = -1;
+        this.detailArrowImage = R.drawable.ic_baseline_keyboard_arrow_right_24;
+    }
+
+    public void updateChangeImage() {
         if (changePercentage > 0) {
             this.change = Change.INCREASE;
             this.changeImage = R.drawable.ic_twotone_trending_up_24;
@@ -32,12 +41,12 @@ public class Favorite {
         else if (changePercentage < 0) {
             this.change = Change.DECREASE;
             this.changeImage = R.drawable.ic_baseline_trending_down_24;
+            this.changePercentage *= -1;
         }
         else {
             this.change = Change.SAME;
             this.changeImage = -1;
         }
-        this.detailArrowImage = R.drawable.ic_baseline_keyboard_arrow_right_24;
     }
 
     public String getTicker() {
@@ -102,5 +111,28 @@ public class Favorite {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public double getLastPrice() {
+        return lastPrice;
+    }
+
+    public void setLastPrice(double lastPrice) {
+        this.lastPrice = lastPrice;
+    }
+
+    @Override
+    public String toString() {
+        return "Favorite{" +
+                "ticker='" + ticker + '\'' +
+                ", shares=" + shares +
+                ", companyName='" + companyName + '\'' +
+                ", stockPrice=" + stockPrice +
+                ", changePercentage=" + changePercentage +
+                ", change=" + change +
+                ", lastPrice=" + lastPrice +
+                ", detailArrowImage=" + detailArrowImage +
+                ", changeImage=" + changeImage +
+                '}';
     }
 }

@@ -12,6 +12,7 @@ public class HeaderViewHolder extends RecyclerView.ViewHolder {
     private TextView portfolioLabelTextView;
     private TextView networthLabelTextView;
     private TextView networthValueTextView;
+    private TextView dateTextView;
 
     public HeaderViewHolder(View view) {
         super(view);
@@ -19,6 +20,7 @@ public class HeaderViewHolder extends RecyclerView.ViewHolder {
         portfolioLabelTextView = view.findViewById(R.id.portfolio_label_textview);
         networthLabelTextView = view.findViewById(R.id.networth_label_textview);
         networthValueTextView = view.findViewById(R.id.networth_value_textview);
+        dateTextView = view.findViewById(R.id.todays_date_textview);
     }
 
     public TextView getPortfolioLabelTextView() {
@@ -43,5 +45,13 @@ public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
     public void setNetworthValueTextView(TextView networthValueTextView) {
         this.networthValueTextView = networthValueTextView;
+    }
+
+    public TextView getDateTextView() {
+        return dateTextView;
+    }
+
+    public void setDateTextView(TextView dateTextView) {
+        this.dateTextView = dateTextView;
     }
 }

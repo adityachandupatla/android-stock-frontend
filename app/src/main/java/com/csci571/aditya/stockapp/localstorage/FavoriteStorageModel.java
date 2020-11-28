@@ -3,10 +3,12 @@ package com.csci571.aditya.stockapp.localstorage;
 public class FavoriteStorageModel {
     private String stockTicker;
     private String companyName;
+    private double lastPrice;
 
-    public FavoriteStorageModel(String stockTicker, String companyName) {
+    public FavoriteStorageModel(String stockTicker, String companyName, double lastPrice) {
         this.stockTicker = stockTicker;
         this.companyName = companyName;
+        this.lastPrice = lastPrice;
     }
 
     public String getStockTicker() {
@@ -25,11 +27,20 @@ public class FavoriteStorageModel {
         this.companyName = companyName;
     }
 
+    public double getLastPrice() {
+        return lastPrice;
+    }
+
+    public void setLastPrice(double lastPrice) {
+        this.lastPrice = lastPrice;
+    }
+
     @Override
     public String toString() {
         return "FavoriteStorageModel{" +
                 "stockTicker='" + stockTicker + '\'' +
                 ", companyName='" + companyName + '\'' +
+                ", lastPrice=" + lastPrice +
                 '}';
     }
 }
