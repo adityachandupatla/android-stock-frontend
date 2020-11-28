@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.csci571.aditya.stockapp.favorite.Favorite;
+import com.csci571.aditya.stockapp.favorite.FavoriteClickListener;
 import com.csci571.aditya.stockapp.favorite.FavoriteSection;
 import com.csci571.aditya.stockapp.info.SectionInfoFactory;
 import com.csci571.aditya.stockapp.info.SectionItemInfoDialog;
@@ -31,6 +32,7 @@ import com.csci571.aditya.stockapp.localstorage.PortfolioStorageModel;
 import com.csci571.aditya.stockapp.network.HomeScreenService;
 import com.csci571.aditya.stockapp.network.StockAppClient;
 import com.csci571.aditya.stockapp.portfolio.Portfolio;
+import com.csci571.aditya.stockapp.portfolio.PortfolioClickListener;
 import com.csci571.aditya.stockapp.portfolio.PortfolioSection;
 import com.csci571.aditya.stockapp.search.SearchMain;
 import com.csci571.aditya.stockapp.swipedrag.SwipeDragCallback;
@@ -43,7 +45,7 @@ import java.util.HashSet;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements PortfolioSection.ClickListener, FavoriteSection.ClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private SectionedRecyclerViewAdapter sectionAdapter;
@@ -79,7 +81,8 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
                     portfolioStorageModel.getTotalAmount()));
         }
         sectionAdapter.addSection(Constants.PORTFOLIO_SECTION_TAG,
-                new PortfolioSection(Parser.beautify(uninvestedCash), portfolioList, this));
+                new PortfolioSection(Parser.beautify(uninvestedCash), portfolioList,
+                        new PortfolioClickListener(sectionAdapter)));
 
         List<Favorite> favList = new ArrayList<>();
         for (FavoriteStorageModel favoriteStorageModel: favoriteStorageModels) {
@@ -88,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
                     0, 0, favoriteStorageModel.getLastPrice()));
         }
         sectionAdapter.addSection(Constants.FAVORITE_SECTION_TAG,
-                new FavoriteSection(favList, this));
+                new FavoriteSection(favList, new FavoriteClickListener(sectionAdapter)));
 
         recyclerView = findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -104,9 +107,6 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         recyclerView.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         loadingTextView.setVisibility(View.VISIBLE);
-
-//        StockAppClient.getInstance(getApplicationContext()).fetchHomeScreenData(tickerSet,
-//                progressBar, loadingTextView, recyclerView, sectionAdapter);
 
         Handler handler = new Handler();
         HomeScreenService homeScreenService = new HomeScreenService(tickerSet,
@@ -133,24 +133,6 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
             myset.add(favoriteStorageModel.getStockTicker());
         }
         return myset;
-    }
-
-    @Override
-    public void onItemRootViewClicked(@NonNull PortfolioSection section, int itemAdapterPosition) {
-        final SectionItemInfoDialog dialog = SectionItemInfoDialog.getInstance(
-                SectionItemInfoFactory.create(itemAdapterPosition, sectionAdapter),
-                SectionInfoFactory.create(section, sectionAdapter.getAdapterForSection(section))
-        );
-        dialog.show(getSupportFragmentManager(), "ABCD");
-    }
-
-    @Override
-    public void onItemRootViewClicked(@NonNull FavoriteSection section, int itemAdapterPosition) {
-        final SectionItemInfoDialog dialog = SectionItemInfoDialog.getInstance(
-                SectionItemInfoFactory.create(itemAdapterPosition, sectionAdapter),
-                SectionInfoFactory.create(section, sectionAdapter.getAdapterForSection(section))
-        );
-        dialog.show(getSupportFragmentManager(), "EFGH");
     }
 
     private void enableSwipeDrag() {
@@ -185,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
 
                 if (viewHolder.itemView.findViewById(R.id.ticker) != null &&
                         targetHolder.itemView.findViewById(R.id.ticker) != null) {
-                    Log.i(TAG, "from: " + fromPosition + " to: " + toPosition + " size: " + portfolioList.size());
+//                    Log.i(TAG, "from: " + fromPosition + " to: " + toPosition + " size: " + portfolioList.size());
                     if (fromPosition < toPosition) {
                         for (int i = fromPosition - 1; i < toPosition - 1; i++) {
                             Collections.swap(portfolioList, i, i + 1);
@@ -197,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
                     }
                     AppStorage.updatePortfolioOrder(getApplicationContext(), portfolioList);
                     sectionAdapter.notifyItemMoved(fromPosition, toPosition);
-                    Log.i(TAG, "New Size: " + portfolioList.size());
+//                    Log.i(TAG, "New Size: " + portfolioList.size());
                     return super.onMove(recyclerView, viewHolder, targetHolder);
                 }
                 if (viewHolder.itemView.findViewById(R.id.ticker_fav) != null &&
@@ -207,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
                     int offset = portfolioList.size() + 1;
                     fromPosition -= offset;
                     toPosition -= offset;
-                    Log.i(TAG, "from: " + fromPosition + " to: " + toPosition + " size: " + favoriteList.size());
+//                    Log.i(TAG, "from: " + fromPosition + " to: " + toPosition + " size: " + favoriteList.size());
                     if (fromPosition < toPosition) {
                         for (int i = fromPosition - 1; i < toPosition - 1; i++) {
                             Collections.swap(favoriteList, i, i + 1);
@@ -220,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
                     AppStorage.updateFavoriteOrder(getApplicationContext(), favoriteList);
                     // re-add the offsets
                     sectionAdapter.notifyItemMoved(fromPosition + offset, toPosition + offset);
-                    Log.i(TAG, "New Size: " + favoriteList.size());
+//                    Log.i(TAG, "New Size: " + favoriteList.size());
                     return super.onMove(recyclerView, viewHolder, targetHolder);
                 }
                 return false;
