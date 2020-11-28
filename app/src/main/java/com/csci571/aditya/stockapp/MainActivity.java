@@ -2,7 +2,6 @@ package com.csci571.aditya.stockapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -12,20 +11,10 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -41,11 +30,10 @@ import com.csci571.aditya.stockapp.localstorage.PortfolioStorageModel;
 import com.csci571.aditya.stockapp.network.StockAppClient;
 import com.csci571.aditya.stockapp.portfolio.Portfolio;
 import com.csci571.aditya.stockapp.portfolio.PortfolioSection;
-import com.csci571.aditya.stockapp.search.AutoSuggestAdapter;
-import com.csci571.aditya.stockapp.search.SearchMenuExpandListener;
+import com.csci571.aditya.stockapp.search.SearchMain;
+import com.csci571.aditya.stockapp.swipedrag.SwipeDragCallback;
 import com.csci571.aditya.stockapp.utils.Constants;
 import com.csci571.aditya.stockapp.utils.Parser;
-import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,10 +45,6 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
 
     private RecyclerView recyclerView;
     private SectionedRecyclerViewAdapter sectionAdapter;
-
-    private static final int TRIGGER_AUTO_COMPLETE = 100;
-    private static final long AUTO_COMPLETE_DELAY = 300;
-    private Handler handler;
 
     private static final String TAG = "com.csci571.aditya.stockapp.MainActivity";
 
@@ -76,7 +60,8 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         myToolbar.inflateMenu(R.menu.search_menu);
         myToolbar.setTitle(R.string.app_name);
 
-        implementSearch(myToolbar);
+        SearchMain.implementSearch(myToolbar, (SearchManager) getSystemService(Context.SEARCH_SERVICE), getComponentName(),
+                this, getApplicationContext(), (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE));
 
         double uninvestedCash = AppStorage.getUninvestedCash(getApplicationContext());
         ArrayList<PortfolioStorageModel> portfolioStorageModels = AppStorage.getPortfolio(getApplicationContext());
@@ -121,90 +106,6 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         StockAppClient.getInstance(getApplicationContext()).fetchHomeScreenData(tickerSet,
                 progressBar, loadingTextView, recyclerView, sectionAdapter);
 
-    }
-
-    private void implementSearch(Toolbar myToolbar) {
-        // Get the SearchView and set the searchable configuration
-        Menu menu = myToolbar.getMenu();
-        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) searchMenuItem.getActionView();
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
-
-        // Get SearchView autocomplete object.
-        final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView
-                .findViewById(R.id.search_src_text);
-
-        AutoSuggestAdapter autoSuggestAdapter = new AutoSuggestAdapter(this,
-                android.R.layout.simple_dropdown_item_1line);
-
-        searchAutoComplete.setAdapter(autoSuggestAdapter);
-
-        // Listen to search view item on click event.
-        searchAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int itemIndex, long id) {
-                String queryString = (String) adapterView.getItemAtPosition(itemIndex);
-                searchAutoComplete.setText(queryString);
-                Log.i(TAG, "you clicked " + queryString);
-            }
-        });
-
-        searchAutoComplete.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.toString().length() >= 3) {
-                    handler.sendEmptyMessageDelayed(TRIGGER_AUTO_COMPLETE,
-                            AUTO_COMPLETE_DELAY);
-                }
-                else {
-                    Log.i(TAG, "Editable length is: " + s.toString().length());
-                }
-            }
-        });
-
-        // Below event is triggered when submit search query.
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.i(TAG, "Search keyword is " + query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
-        handler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(@NonNull Message msg) {
-                if (msg.what == TRIGGER_AUTO_COMPLETE) {
-                    if (!TextUtils.isEmpty(searchAutoComplete.getText())) {
-                        StockAppClient.getInstance(getApplicationContext())
-                                .fetchAutoSuggestData(searchAutoComplete.getText().toString(),
-                                        autoSuggestAdapter);
-                    }
-                }
-                return false;
-            }
-        });
-
-        searchMenuItem.setOnActionExpandListener(new SearchMenuExpandListener(searchView,
-                (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)));
     }
 
     private double getSharesOfFavoriteStock(String stockTicker, ArrayList<PortfolioStorageModel> portfolioStorageModels) {

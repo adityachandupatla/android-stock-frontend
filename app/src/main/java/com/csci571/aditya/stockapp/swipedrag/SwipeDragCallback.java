@@ -1,4 +1,4 @@
-package com.csci571.aditya.stockapp;
+package com.csci571.aditya.stockapp.swipedrag;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 
+import com.csci571.aditya.stockapp.R;
+
 abstract public class SwipeDragCallback extends ItemTouchHelper.Callback {
 
     Context mContext;
@@ -26,10 +28,10 @@ abstract public class SwipeDragCallback extends ItemTouchHelper.Callback {
     private int intrinsicWidth;
     private int intrinsicHeight;
 
-    private static final String TAG = "com.csci571.aditya.stockapp.SwipeDragCallback";
+    private static final String TAG = "com.csci571.aditya.stockapp.swipedrag.SwipeDragCallback";
 
 
-    SwipeDragCallback(Context context) {
+    public SwipeDragCallback(Context context) {
         mContext = context;
         mBackground = new ColorDrawable();
         backgroundColor = Color.parseColor("#b80f0a");
