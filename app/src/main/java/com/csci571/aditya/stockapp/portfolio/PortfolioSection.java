@@ -91,7 +91,7 @@ public class PortfolioSection extends Section {
         }
 
         itemHolder.getDetailArrowImageView().setOnClickListener(v ->
-                clickListener.onItemRootViewClicked(this, itemHolder.getAdapterPosition())
+                clickListener.onItemRootViewClicked(portfolio.getTicker())
         );
     }
 
@@ -112,6 +112,6 @@ public class PortfolioSection extends Section {
     }
 
     public interface ClickListener {
-        void onItemRootViewClicked(@NonNull final PortfolioSection section, final int itemAdapterPosition);
+        void onItemRootViewClicked(String ticker);
     }
 }

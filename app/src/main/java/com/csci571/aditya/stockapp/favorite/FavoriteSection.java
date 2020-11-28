@@ -86,7 +86,7 @@ public class FavoriteSection extends Section {
         }
 
         itemHolder.getDetailArrowImageView().setOnClickListener(v ->
-                clickListener.onItemRootViewClicked(this, itemHolder.getAdapterPosition())
+                clickListener.onItemRootViewClicked(favorite.getTicker())
         );
     }
 
@@ -101,6 +101,6 @@ public class FavoriteSection extends Section {
     }
 
     public interface ClickListener {
-        void onItemRootViewClicked(@NonNull final FavoriteSection section, final int itemAdapterPosition);
+        void onItemRootViewClicked(String ticker);
     }
 }

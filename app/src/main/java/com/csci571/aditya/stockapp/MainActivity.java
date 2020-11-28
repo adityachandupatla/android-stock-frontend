@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         }
         sectionAdapter.addSection(Constants.PORTFOLIO_SECTION_TAG,
                 new PortfolioSection(Parser.beautify(uninvestedCash), portfolioList,
-                        new PortfolioClickListener(sectionAdapter)));
+                        new PortfolioClickListener()));
 
         List<Favorite> favList = new ArrayList<>();
         for (FavoriteStorageModel favoriteStorageModel: favoriteStorageModels) {
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                     0, 0, favoriteStorageModel.getLastPrice()));
         }
         sectionAdapter.addSection(Constants.FAVORITE_SECTION_TAG,
-                new FavoriteSection(favList, new FavoriteClickListener(sectionAdapter)));
+                new FavoriteSection(favList, new FavoriteClickListener()));
 
         recyclerView = findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
