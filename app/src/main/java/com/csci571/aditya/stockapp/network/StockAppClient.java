@@ -90,6 +90,7 @@ public class StockAppClient {
 
     public void fetchHomeScreenData(HashSet<String> tickerSet, ProgressBar progressBar,
                                     TextView loadingTextView, RecyclerView recyclerView, SectionedRecyclerViewAdapter sectionAdapter) {
+        Log.i(TAG, "<<<<<<<<<<<<  FETCHING HOME SCREEN DATA >>>>>>>>>>>>>");
         Map<String, Double> map = new HashMap<>();
         final AtomicInteger requests = new AtomicInteger(tickerSet.size());
         for (String ticker: tickerSet) {
