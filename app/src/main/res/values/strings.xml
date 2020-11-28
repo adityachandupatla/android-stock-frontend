@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Stocks</string>
+    <string name="app_label">Stocks App</string>
     <string name="portfolio_label">PORTFOLIO</string>
     <string name="sample_networth_value">19450.26</string>
     <string name="net_worth_label">Net Worth</string>
@@ -25,4 +26,6 @@
         &lt;a href="https://www.tiingo.com/">Powered by tiingo&lt;/a>
     </string>
     <string name="loading_message">Fetching Data</string>
+    <string name="search_hint">Search Stock</string>
+    <string name="search_item">Search Item</string>
 </resources>

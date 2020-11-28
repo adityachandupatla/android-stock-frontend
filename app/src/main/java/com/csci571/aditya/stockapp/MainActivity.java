@@ -2,18 +2,27 @@ package com.csci571.aditya.stockapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.csci571.aditya.stockapp.favorite.Favorite;
@@ -27,8 +36,10 @@ import com.csci571.aditya.stockapp.localstorage.PortfolioStorageModel;
 import com.csci571.aditya.stockapp.network.StockAppClient;
 import com.csci571.aditya.stockapp.portfolio.Portfolio;
 import com.csci571.aditya.stockapp.portfolio.PortfolioSection;
+import com.csci571.aditya.stockapp.search.SearchMenuExpandListener;
 import com.csci571.aditya.stockapp.utils.Constants;
 import com.csci571.aditya.stockapp.utils.Parser;
+import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,8 +61,12 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
+        myToolbar.inflateMenu(R.menu.search_menu);
+        myToolbar.setTitle(R.string.app_name);
+
+        implementSearch(myToolbar);
 
         double uninvestedCash = AppStorage.getUninvestedCash(getApplicationContext());
         ArrayList<PortfolioStorageModel> portfolioStorageModels = AppStorage.getPortfolio(getApplicationContext());
@@ -96,6 +111,22 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         StockAppClient.getInstance(getApplicationContext()).fetchHomeScreenData(tickerSet,
                 progressBar, loadingTextView, recyclerView, sectionAdapter);
 
+    }
+
+    private void implementSearch(Toolbar myToolbar) {
+        // Get the SearchView and set the searchable configuration
+        Menu menu = myToolbar.getMenu();
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+
+        final AppCompatAutoCompleteTextView autoCompleteTextView =
+                findViewById(R.id.action_search);
+        searchMenuItem.setOnActionExpandListener(new SearchMenuExpandListener(searchView,
+                (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)));
     }
 
     private double getSharesOfFavoriteStock(String stockTicker, ArrayList<PortfolioStorageModel> portfolioStorageModels) {
