@@ -1,6 +1,7 @@
 package com.csci571.aditya.stockapp.network;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.csci571.aditya.stockapp.favorite.Favorite;
 import com.csci571.aditya.stockapp.favorite.FavoriteSection;
+import com.csci571.aditya.stockapp.localstorage.AppStorage;
 import com.csci571.aditya.stockapp.models.AutoSuggestModel;
 import com.csci571.aditya.stockapp.models.Suggestion;
 import com.csci571.aditya.stockapp.models.SummaryModel;
@@ -66,8 +68,8 @@ public class StockAppClient {
             portfolio.updateChangeImage();
             stockWorth += currentStockPrice * portfolio.getShares();
         }
-        double netWorth = Double.valueOf(portfolioSection.getNetWorth());
-        portfolioSection.setNetWorth(Parser.beautify(netWorth + stockWorth));
+        double uninvestedCash = AppStorage.getUninvestedCash(mCtx);
+        portfolioSection.setNetWorth(Parser.beautify(uninvestedCash + stockWorth));
 
         FavoriteSection favoriteSection = (FavoriteSection) sectionAdapter.getSection(Constants.FAVORITE_SECTION_TAG);
         List<Favorite> favoriteList = favoriteSection.getList();

@@ -12,6 +12,7 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -27,6 +28,7 @@ import com.csci571.aditya.stockapp.info.SectionItemInfoFactory;
 import com.csci571.aditya.stockapp.localstorage.AppStorage;
 import com.csci571.aditya.stockapp.localstorage.FavoriteStorageModel;
 import com.csci571.aditya.stockapp.localstorage.PortfolioStorageModel;
+import com.csci571.aditya.stockapp.network.HomeScreenService;
 import com.csci571.aditya.stockapp.network.StockAppClient;
 import com.csci571.aditya.stockapp.portfolio.Portfolio;
 import com.csci571.aditya.stockapp.portfolio.PortfolioSection;
@@ -103,9 +105,14 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         progressBar.setVisibility(View.VISIBLE);
         loadingTextView.setVisibility(View.VISIBLE);
 
-        StockAppClient.getInstance(getApplicationContext()).fetchHomeScreenData(tickerSet,
-                progressBar, loadingTextView, recyclerView, sectionAdapter);
+//        StockAppClient.getInstance(getApplicationContext()).fetchHomeScreenData(tickerSet,
+//                progressBar, loadingTextView, recyclerView, sectionAdapter);
 
+        Handler handler = new Handler();
+        HomeScreenService homeScreenService = new HomeScreenService(tickerSet,
+                progressBar, loadingTextView, recyclerView, sectionAdapter,
+                getApplicationContext(), handler);
+        handler.post(homeScreenService);
     }
 
     private double getSharesOfFavoriteStock(String stockTicker, ArrayList<PortfolioStorageModel> portfolioStorageModels) {
