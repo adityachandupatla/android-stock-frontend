@@ -60,13 +60,15 @@ public class StockAppClient {
         List<Portfolio> portfolioList = portfolioSection.getList();
         double stockWorth = 0;
         for (Portfolio portfolio: portfolioList) {
-            double currentStockPrice = map.get(portfolio.getTicker());
-            double averagePriceOfStockOwned = portfolio.getTotalAmountOwned() / portfolio.getShares();
-            double changePercentage = currentStockPrice - averagePriceOfStockOwned;
-            portfolio.setStockPrice(currentStockPrice);
-            portfolio.setChangePercentage(changePercentage);
-            portfolio.updateChangeImage();
-            stockWorth += currentStockPrice * portfolio.getShares();
+            if (map.containsKey(portfolio.getTicker())) {
+                double currentStockPrice = map.get(portfolio.getTicker());
+                double averagePriceOfStockOwned = portfolio.getTotalAmountOwned() / portfolio.getShares();
+                double changePercentage = currentStockPrice - averagePriceOfStockOwned;
+                portfolio.setStockPrice(currentStockPrice);
+                portfolio.setChangePercentage(changePercentage);
+                portfolio.updateChangeImage();
+                stockWorth += currentStockPrice * portfolio.getShares();
+            }
         }
         double uninvestedCash = AppStorage.getUninvestedCash(mCtx);
         portfolioSection.setNetWorth(Parser.beautify(uninvestedCash + stockWorth));
@@ -74,11 +76,13 @@ public class StockAppClient {
         FavoriteSection favoriteSection = (FavoriteSection) sectionAdapter.getSection(Constants.FAVORITE_SECTION_TAG);
         List<Favorite> favoriteList = favoriteSection.getList();
         for (Favorite favorite: favoriteList) {
-            double currentStockPrice = map.get(favorite.getTicker());
-            double changePercentage = currentStockPrice - favorite.getLastPrice();
-            favorite.setStockPrice(currentStockPrice);
-            favorite.setChangePercentage(changePercentage);
-            favorite.updateChangeImage();
+            if (map.containsKey(favorite.getTicker())) {
+                double currentStockPrice = map.get(favorite.getTicker());
+                double changePercentage = currentStockPrice - favorite.getLastPrice();
+                favorite.setStockPrice(currentStockPrice);
+                favorite.setChangePercentage(changePercentage);
+                favorite.updateChangeImage();
+            }
         }
 
         sectionAdapter.notifyDataSetChanged();
