@@ -43,7 +43,7 @@ public class SearchMain {
         handler = new Handler(new SearchHandler(TRIGGER_AUTO_COMPLETE, searchAutoComplete,
                 appContext, autoSuggestAdapter));
         // Listen to search view item on click event.
-        searchAutoComplete.setOnItemClickListener(new SearchOnItemClickListener(searchAutoComplete));
+        searchAutoComplete.setOnItemClickListener(new SearchOnItemClickListener(context, searchAutoComplete));
         // Listen to text changes
         searchAutoComplete.addTextChangedListener(new SearchTextWatcher(TRIGGER_AUTO_COMPLETE, AUTO_COMPLETE_DELAY, handler));
         // Listen to submit events
