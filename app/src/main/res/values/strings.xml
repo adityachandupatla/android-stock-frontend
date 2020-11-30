@@ -28,6 +28,7 @@
     <string name="loading_message">Fetching Data</string>
     <string name="search_hint">Search Stock</string>
     <string name="search_item">Search Item</string>
+    <string name="fav_item">Favorite Item</string>
     <string name="sample_detail_ticker_textview">MSFT</string>
     <string name="sample_detail_company_name_textview">Microsoft Corporation</string>
     <string name="sample_detail_stockprice_textview">$210.08</string>
