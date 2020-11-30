@@ -11,9 +11,9 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
@@ -21,18 +21,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.csci571.aditya.stockapp.favorite.Favorite;
-import com.csci571.aditya.stockapp.favorite.FavoriteClickListener;
 import com.csci571.aditya.stockapp.favorite.FavoriteSection;
-import com.csci571.aditya.stockapp.info.SectionInfoFactory;
-import com.csci571.aditya.stockapp.info.SectionItemInfoDialog;
-import com.csci571.aditya.stockapp.info.SectionItemInfoFactory;
 import com.csci571.aditya.stockapp.localstorage.AppStorage;
 import com.csci571.aditya.stockapp.localstorage.FavoriteStorageModel;
 import com.csci571.aditya.stockapp.localstorage.PortfolioStorageModel;
 import com.csci571.aditya.stockapp.network.HomeScreenService;
-import com.csci571.aditya.stockapp.network.StockAppClient;
 import com.csci571.aditya.stockapp.portfolio.Portfolio;
-import com.csci571.aditya.stockapp.portfolio.PortfolioClickListener;
 import com.csci571.aditya.stockapp.portfolio.PortfolioSection;
 import com.csci571.aditya.stockapp.search.SearchMain;
 import com.csci571.aditya.stockapp.swipedrag.SwipeDragCallback;
@@ -45,10 +39,12 @@ import java.util.HashSet;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PortfolioSection.ClickListener, FavoriteSection.ClickListener {
 
     private RecyclerView recyclerView;
     private SectionedRecyclerViewAdapter sectionAdapter;
+    private HomeScreenService homeScreenService;
+    private Handler handler;
 
     private static final String TAG = "com.csci571.aditya.stockapp.MainActivity";
 
@@ -60,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         myToolbar.inflateMenu(R.menu.search_menu);
         myToolbar.setTitle(R.string.app_name);
 
@@ -82,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         }
         sectionAdapter.addSection(Constants.PORTFOLIO_SECTION_TAG,
                 new PortfolioSection(Parser.beautify(uninvestedCash), portfolioList,
-                        new PortfolioClickListener()));
+                        this, getApplicationContext()));
 
         List<Favorite> favList = new ArrayList<>();
         for (FavoriteStorageModel favoriteStorageModel: favoriteStorageModels) {
@@ -91,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     0, 0, favoriteStorageModel.getLastPrice()));
         }
         sectionAdapter.addSection(Constants.FAVORITE_SECTION_TAG,
-                new FavoriteSection(favList, new FavoriteClickListener()));
+                new FavoriteSection(favList, this, getApplicationContext()));
 
         recyclerView = findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -108,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         loadingTextView.setVisibility(View.VISIBLE);
 
-        Handler handler = new Handler();
-        HomeScreenService homeScreenService = new HomeScreenService(tickerSet,
+        handler = new Handler();
+        homeScreenService = new HomeScreenService(tickerSet,
                 progressBar, loadingTextView, recyclerView, sectionAdapter,
                 getApplicationContext(), handler);
         handler.post(homeScreenService);
@@ -211,5 +207,19 @@ public class MainActivity extends AppCompatActivity {
 
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeDragCallback);
         itemTouchhelper.attachToRecyclerView(recyclerView);
+    }
+
+    @Override
+    public void onItemRootViewClicked(PortfolioSection portfolioSection, String ticker) {
+        Intent myIntent = new Intent(MainActivity.this, DetailActivity.class);
+        myIntent.putExtra(Constants.INTENT_TICKER_EXTRA,ticker);
+        startActivity(myIntent);
+    }
+
+    @Override
+    public void onItemRootViewClicked(FavoriteSection favoriteSection, String ticker) {
+        Intent myIntent = new Intent(MainActivity.this, DetailActivity.class);
+        myIntent.putExtra(Constants.INTENT_TICKER_EXTRA, ticker);
+        startActivity(myIntent);
     }
 }
