@@ -43,7 +43,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/loading_text"
+            android:id="@+id/detailLoadingText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/loading_message"
@@ -58,7 +58,8 @@
         android:layout_height="match_parent"
         android:fillViewport="true"
         tools:layout_editor_absoluteX="213dp"
-        tools:layout_editor_absoluteY="157dp">
+        tools:layout_editor_absoluteY="157dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,7 +75,11 @@
                     android:id="@+id/tickerTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:text="@string/sample_detail_ticker_textview"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:paddingStart="10sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -82,7 +87,9 @@
                     android:id="@+id/companyNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:text="@string/sample_detail_company_name_textview"
+                    android:textStyle="bold"
+                    android:paddingStart="10sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tickerTextView" />
 
@@ -90,7 +97,11 @@
                     android:id="@+id/stockPriceTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:text="@string/sample_detail_stockprice_textview"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:paddingEnd="10sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -98,7 +109,9 @@
                     android:id="@+id/changeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:text="@string/sample_detail_change_textview"
+                    android:textStyle="bold"
+                    android:paddingEnd="10sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/stockPriceTextView" />
 
@@ -111,9 +124,14 @@
 
                 <Button
                     android:id="@+id/tradeButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Button"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/round_trade_btn"
+                    android:text="@string/detailscreen_trade_button"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -121,7 +139,11 @@
                     android:id="@+id/sharesOwnedTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@color/black"
+                    android:text="@string/sample_detail_shares_owned_textview"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.22"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/portfoliolabelTextView" />
 
@@ -129,7 +151,12 @@
                     android:id="@+id/marketValueTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/sample_detail_marketvalue_textview"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.22"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/sharesOwnedTextView" />
 
@@ -137,80 +164,110 @@
                     android:id="@+id/portfoliolabelTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:paddingStart="10sp"
+                    android:text="@string/detailscreen_portfolio_section_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="160dp">
 
                 <TextView
                     android:id="@+id/statsLabelTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:paddingStart="10sp"
+                    android:text="@string/detailscreen_stats_section_label"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
 
                 <TextView
                     android:id="@+id/volumeTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/sample_details_volume_textview"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/openPriceTextView" />
 
                 <TextView
                     android:id="@+id/lowPriceTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="TextView"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/sample_low_textview"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toStartOf="@+id/bidPriceTextView"
                     app:layout_constraintStart_toEndOf="@+id/currentPriceTextView"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/bidPriceTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="TextView"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/sample_bid_textview"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/currentPriceTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/sample_detail_current_textview"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/statsLabelTextView" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/openPriceTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/sample_open_textview"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/currentPriceTextView" />
 
                 <TextView
                     android:id="@+id/highPriceTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/sample_detail_high_textview"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/bidPriceTextView" />
 
                 <TextView
                     android:id="@+id/midPriceTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:text="@string/sample_detail_mid_textview"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toStartOf="@+id/highPriceTextView"
                     app:layout_constraintStart_toEndOf="@+id/openPriceTextView"
                     app:layout_constraintTop_toBottomOf="@+id/lowPriceTextView" />
@@ -224,7 +281,9 @@
                     android:id="@+id/aboutContentTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:textColor="@color/black"
+                    android:padding="5dp"
+                    android:text="@string/sample_detail_about_textview"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/aboutLabelTextView" />
 
@@ -232,7 +291,11 @@
                     android:id="@+id/aboutLabelTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:paddingStart="10sp"
+                    android:text="@string/detailscreen_about_section_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>

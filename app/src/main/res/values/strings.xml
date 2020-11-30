@@ -28,4 +28,22 @@
     <string name="loading_message">Fetching Data</string>
     <string name="search_hint">Search Stock</string>
     <string name="search_item">Search Item</string>
+    <string name="sample_detail_ticker_textview">MSFT</string>
+    <string name="sample_detail_company_name_textview">Microsoft Corporation</string>
+    <string name="sample_detail_stockprice_textview">$210.08</string>
+    <string name="sample_detail_change_textview">-$6.15</string>
+    <string name="detailscreen_portfolio_section_label">Portfolio</string>
+    <string name="sample_detail_shares_owned_textview">Shares Owned: 12.0</string>
+    <string name="sample_detail_marketvalue_textview">Market Value: $2520.96</string>
+    <string name="detailscreen_stats_section_label">Stats</string>
+    <string name="sample_detail_current_textview">Current Price: 210.08</string>
+    <string name="sample_low_textview">Low: 208.1</string>
+    <string name="sample_bid_textview">Bid Price: 0.0</string>
+    <string name="sample_open_textview">Open Price: 213.85</string>
+    <string name="sample_detail_mid_textview">Mid: 0.0</string>
+    <string name="sample_detail_high_textview">High: 216.3399</string>
+    <string name="sample_details_volume_textview">Volume: 36,465,546.00</string>
+    <string name="detailscreen_about_section_label">About</string>
+    <string name="sample_detail_about_textview">Microsoft (Nasdaq “MSFT” @microsoft) enables digital transformation for the era of an intelligent cloud and an intelligent edge. Its mission is to empower every person and every organization on the planet to achieve more.</string>
+    <string name="detailscreen_trade_button">TRADE</string>
 </resources>

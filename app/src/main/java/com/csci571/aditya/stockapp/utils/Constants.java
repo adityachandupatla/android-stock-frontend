@@ -21,7 +21,8 @@ public class Constants {
     public static final String HISTORICAL_ENDPOINT_TEMPLATE = "/stock/api/v1.0/historical/%s?startDate=%s";
     public static final String DAILY_ENDPOINT_TEMPLATE = "/stock/api/v1.0/daily/%s?startDate=%s&resampleFreq=4min";
     public static final String AUTOCOMPLETE_ENDPOINT_TEMPLATE = "/stock/api/v1.0/search?query=%s";
-    public static final String NEWS_ENDPOINT_TEMPLATE = "/stock/api/v1.0/news/%s?q=%s";
+    public static final String NEWS_ENDPOINT_TEMPLATE = "/stock/api/v1.0/news/%s";
+    public static final int DETAIL_SCREEN_REQUESTS = 3;
 
     // Default portfolio
     public static PortfolioStorageModel MICROSOFT_PORTFOLIO = new PortfolioStorageModel("MSFT", 8.0, 1619.76);
@@ -38,5 +39,6 @@ public class Constants {
     // Misc
     public static final String PORTFOLIO_SECTION_TAG = "PortfolioTag";
     public static final String FAVORITE_SECTION_TAG = "FavoriteTag";
+    public static final String INTENT_TICKER_EXTRA = "IntentTicker";
 
 }

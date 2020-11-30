@@ -18,6 +18,10 @@
 
     <color name="dateColor">#096e6a</color>
 
+    <color name="positiveChange">#00B300</color>
+    <color name="negativeChange">#FF0026</color>
+    <color name="noChange">#FF018786</color>
 
+    <color name="tradebuttoncolor">#329A5D</color>
 
 </resources>
