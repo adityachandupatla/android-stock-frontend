@@ -128,6 +128,12 @@ public class AppStorage {
         return pref.getFloat(Constants.UNINVESTED_KEY, (float) 0.0);
     }
 
+    private static void setUninvestedCash(Context context, double uninvestedCash) {
+        SharedPreferences pref = context.getSharedPreferences(Constants.UNINVESTED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putFloat(Constants.UNINVESTED_KEY, (float) uninvestedCash);
+    }
+
     public static void removeFromFavorite(Context context, String ticker) {
         SharedPreferences pref = context.getSharedPreferences(Constants.FAVORITES_PREF_NAME, Context.MODE_PRIVATE);
         Gson gson = new Gson();
@@ -239,5 +245,52 @@ public class AppStorage {
             }
         }
         return false;
+    }
+
+    public static void updatePortfolioStock(Context context, String ticker, double newShares,
+                                            double newStockPrice, boolean buy) {
+        SharedPreferences pref = context.getSharedPreferences(Constants.PORTFOLIO_PREF_NAME, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = pref.getString(Constants.PORTFOLIO_KEY, "");
+        if (!json.equals("")) {
+            ArrayList<PortfolioStorageModel> portfolioStorageModels = gson.fromJson(json, new TypeToken<ArrayList<PortfolioStorageModel>>(){}.getType());
+
+            for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
+                if (portfolioStorageModel.getStockTicker().equals(ticker)) {
+                    double uninvestedCash = getUninvestedCash(context);
+                    double transactionValue = newShares * newStockPrice;
+                    double prevSharesOwned = portfolioStorageModel.getSharesOwned();
+                    double prevTotalAmount = portfolioStorageModel.getTotalAmount();
+                    if (buy) {
+                        setUninvestedCash(context, uninvestedCash - transactionValue);
+
+                        double newTotalAmount = prevTotalAmount + (newShares * newStockPrice);
+                        portfolioStorageModel.setSharesOwned(prevSharesOwned + newShares);
+                        portfolioStorageModel.setTotalAmount(newTotalAmount);
+                    }
+                    else {
+                        setUninvestedCash(context, uninvestedCash + transactionValue);
+
+                        if (prevSharesOwned - newShares == 0) {
+                            portfolioStorageModels.remove(portfolioStorageModel);
+                        }
+                        else {
+                            double avgPricePerStock = prevTotalAmount / prevSharesOwned;
+                            double newTotalAmount = prevTotalAmount - (newShares * avgPricePerStock);
+                            portfolioStorageModel.setSharesOwned(prevSharesOwned - newShares);
+                            portfolioStorageModel.setTotalAmount(newTotalAmount);
+                        }
+                    }
+                    break;
+                }
+            }
+
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString(Constants.PORTFOLIO_KEY, gson.toJson(portfolioStorageModels));
+            boolean commitResult = editor.commit();
+            if (!commitResult) {
+                Log.e(TAG, "Unable to commit the new portfolio order into sharedPreferences local storage");
+            }
+        }
     }
 }

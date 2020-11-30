@@ -24,4 +24,6 @@
 
     <color name="tradebuttoncolor">#329A5D</color>
 
+    <color name="successdialogbackground">#2D9765</color>
+
 </resources>

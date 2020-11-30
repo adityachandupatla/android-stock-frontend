@@ -27,7 +27,7 @@
         android:layout_marginTop="50dp"
         android:ems="10"
         android:inputType="number"
-        android:text="@string/sample_dialog_share_val"
+        android:hint="@string/sample_dialog_share_val"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dialog_header" />
 

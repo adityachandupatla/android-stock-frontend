@@ -54,4 +54,7 @@
     <string name="sellbutton">SELL</string>
     <string name="buybutton">BUY</string>
     <string name="sample_share_result_text">$9313.46 available to buy MSFT</string>
+    <string name="congratulations">Congratulations!</string>
+    <string name="success_message">You have successfully bought 2 shares of AMZN</string>
+    <string name="done">DONE</string>
 </resources>
