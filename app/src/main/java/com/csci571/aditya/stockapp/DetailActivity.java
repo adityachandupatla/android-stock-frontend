@@ -1,11 +1,13 @@
 package com.csci571.aditya.stockapp;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.core.widget.NestedScrollView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,6 +15,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +63,11 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
         TextView loadingTextView = findViewById(R.id.detailLoadingText);
         NestedScrollView nestedScrollView = findViewById(R.id.nested_scroll_view);
 
+        Button button = (Button) findViewById(R.id.tradeButton);
+
+        // add button listener
+        button.setOnClickListener(this::showAlertDialogButtonClicked);
+
         nestedScrollView.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         loadingTextView.setVisibility(View.VISIBLE);
@@ -66,6 +75,31 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
         data = new DetailScreenWrapperModel();
         StockAppClient.getInstance(getApplicationContext()).fetchDetailScreenData(ticker,
                 progressBar, loadingTextView, nestedScrollView, data);
+    }
+
+    public void showAlertDialogButtonClicked(View view) {
+        // create an alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("Name");
+        // set the custom layout
+        final View customLayout = getLayoutInflater().inflate(R.layout.trade_dialog, null);
+        builder.setView(customLayout);
+        // add a button
+//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                // send data from the AlertDialog to the Activity
+////                EditText editText = customLayout.findViewById(R.id.editText);
+////                sendDialogDataToActivity(editText.getText().toString());
+//            }
+//        });
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void sendDialogDataToActivity(String data) {
+        Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
     }
 
     @Override
