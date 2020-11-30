@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+
+
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/data.js"></script>
+<script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
+<script src="https://code.highcharts.com/stock/indicators/volume-by-price.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+<div id="container" style="height: 350px; min-width: 310px"></div>
+
+<script type="text/javascript">
+		function plotChart(url, ticker) {
+			$.ajax({
+				url: url,
+				context: document.body,
+				success: function (data, status, jqXHR) {
+			    	chartData = data["data"];
+				    // split the data set into ohlc and volume
+				    var ohlc = [],
+				        volume = [],
+				        dataLength = chartData.length,
+				        // set the allowed units for data grouping
+				        groupingUnits = [[
+				            'week',                         // unit name
+				            [1]                             // allowed multiples
+				        ], [
+				            'month',
+				            [1, 2, 3, 4, 6]
+				        ]],
+
+				        i = 0;
+
+				    for (i; i < dataLength; i += 1) {
+				        ohlc.push([
+				            chartData[i].date, // the date
+				            chartData[i].open, // open
+				            chartData[i].high, // high
+				            chartData[i].low, // low
+				            chartData[i].close // close
+				        ]);
+
+				        volume.push([
+				            chartData[i].date, // the date
+				            chartData[i].volume // the volume
+				        ]);
+				    }
+
+
+				    // create the chart
+				    Highcharts.stockChart('container', {
+
+				        rangeSelector: {
+				        	enabled: true,
+	                		allButtonsEnabled: true,
+				            selected: 2
+				        },
+
+				        navigator: {
+			                enabled: true,
+			                adaptToUpdatedData: true
+			            },
+
+				        xAxis: {
+							type: 'datetime'
+			            },
+
+				        yAxis: [{
+				            startOnTick: false,
+				            endOnTick: false,
+				            labels: {
+				                align: 'right',
+				                x: -3
+				            },
+				            title: {
+				                text: 'OHLC'
+				            },
+				            height: '60%',
+				            lineWidth: 2,
+				            resize: {
+				                enabled: true
+				            }
+				        }, {
+				            labels: {
+				                align: 'right',
+				                x: -3
+				            },
+				            title: {
+				                text: 'Volume'
+				            },
+				            top: '65%',
+				            height: '35%',
+				            offset: 0,
+				            lineWidth: 2
+				        }],
+
+				        tooltip: {
+				            split: true
+				        },
+
+				        plotOptions: {
+				            series: {
+				                dataGrouping: {
+				                    units: groupingUnits
+				                }
+				            }
+				        },
+
+				        series: [{
+				            type: 'candlestick',
+				            name: ticker,
+				            id: ticker,
+				            zIndex: 2,
+				            data: ohlc
+				        }, {
+				            type: 'column',
+				            name: 'Volume',
+				            id: 'volume',
+				            data: volume,
+				            yAxis: 1
+				        }, {
+				            type: 'vbp',
+				            linkedTo: ticker,
+				            params: {
+				                volumeSeriesID: 'volume'
+				            },
+				            dataLabels: {
+				                enabled: false
+				            },
+				            zoneLines: {
+				                enabled: false
+				            }
+				        }, {
+				            type: 'sma',
+				            linkedTo: ticker,
+				            zIndex: 1,
+				            marker: {
+				                enabled: false
+				            }
+				        }]
+				    });
+				},
+			  	error: function (jqXHR, status, err) {
+			    	console.log(err);
+			    	console.log(status);
+			  	}
+			});
+		}
+	</script>
+</body>
+</html>
