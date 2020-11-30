@@ -149,6 +149,22 @@ public class AppStorage {
         }
     }
 
+    public static void addToFavorite(Context context, FavoriteStorageModel newFavoriteStorageModel) {
+        SharedPreferences pref = context.getSharedPreferences(Constants.FAVORITES_PREF_NAME, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = pref.getString(Constants.FAVORITES_KEY, "");
+        if (!json.equals("")) {
+            ArrayList<FavoriteStorageModel> favoriteStorageModels = gson.fromJson(json, new TypeToken<ArrayList<FavoriteStorageModel>>(){}.getType());
+            favoriteStorageModels.add(newFavoriteStorageModel);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString(Constants.FAVORITES_KEY, gson.toJson(favoriteStorageModels));
+            boolean commitResult = editor.commit();
+            if (!commitResult) {
+                Log.e(TAG, "Unable to commit the new favorites into sharedPreferences local storage");
+            }
+        }
+    }
+
     public static void updatePortfolioOrder(Context context, List<Portfolio> portfolioList) {
         SharedPreferences pref = context.getSharedPreferences(Constants.PORTFOLIO_PREF_NAME, Context.MODE_PRIVATE);
         Gson gson = new Gson();
@@ -213,5 +229,15 @@ public class AppStorage {
             }
         }
         return sharesOwned;
+    }
+
+    public static boolean isFavorite(Context context, String ticker) {
+        ArrayList<FavoriteStorageModel> favoriteStorageModels = getFavorites(context);
+        for (FavoriteStorageModel favoriteStorageModel: favoriteStorageModels) {
+            if (favoriteStorageModel.getStockTicker().equals(ticker)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
