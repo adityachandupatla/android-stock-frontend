@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -207,6 +209,23 @@ public class StockAppClient {
         TextView aboutContentTextView = nestedScrollView.findViewById(R.id.aboutContentTextView);
         aboutContentTextView.setText(outlookModel.getDescription());
 
+        WebView webview = nestedScrollView.findViewById(R.id.highcharts_webview);
+        webview.getSettings().setJavaScriptEnabled(true);
+        webview.clearCache(true);
+        webview.getSettings().setDomStorageEnabled(true);
+        String historicalUrl = host + String.format(Constants.HISTORICAL_ENDPOINT_TEMPLATE, ticker);
+        String jsUrl = String.format(Constants.JS_FUNCTION_BUILDER_TEMPLATE, historicalUrl, ticker);
+        webview.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (url.equals(Constants.HIGHCHARTS_ASSET_PATH)) {
+                    webview.loadUrl(jsUrl);
+                }
+            }
+        });
+        webview.loadUrl(Constants.HIGHCHARTS_ASSET_PATH);
+
         progressBar.setVisibility(View.INVISIBLE);
         loadingTextView.setVisibility(View.INVISIBLE);
         nestedScrollView.setVisibility(View.VISIBLE);
@@ -268,12 +287,10 @@ public class StockAppClient {
     }
 
     public void fetchDetailScreenData(String ticker, ProgressBar progressBar, TextView loadingTextView,
-                                      NestedScrollView nestedScrollView) {
+                                      NestedScrollView nestedScrollView, DetailScreenWrapperModel data) {
         String outlookUrl = host + String.format(Constants.OUTLOOK_ENDPOINT_TEMPLATE, ticker);
         String summaryUrl = host + String.format(Constants.SUMMARY_ENDPOINT_TEMPLATE, ticker);
         String newsUrl = host + String.format(Constants.NEWS_ENDPOINT_TEMPLATE, ticker);
-
-        DetailScreenWrapperModel data = new DetailScreenWrapperModel();
 
         final AtomicInteger requests = new AtomicInteger(Constants.DETAIL_SCREEN_REQUESTS);
 
