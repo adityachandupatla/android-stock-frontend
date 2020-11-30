@@ -1,9 +1,11 @@
 package com.csci571.aditya.stockapp.portfolio;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 
 import com.csci571.aditya.stockapp.R;
+import com.csci571.aditya.stockapp.favorite.FavoriteSection;
 import com.csci571.aditya.stockapp.utils.Change;
 import com.csci571.aditya.stockapp.utils.Parser;
 
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
@@ -20,8 +23,9 @@ public class PortfolioSection extends Section {
     private String netWorth;
     private List<Portfolio> list;
     private ClickListener clickListener;
+    private Context context;
 
-    public PortfolioSection(String netWorth, List<Portfolio> list, ClickListener clickListener) {
+    public PortfolioSection(String netWorth, List<Portfolio> list, ClickListener clickListener, Context context) {
 
         super(SectionParameters.builder()
                 .itemResourceId(R.layout.portfolio_item)
@@ -31,6 +35,7 @@ public class PortfolioSection extends Section {
         this.netWorth = netWorth;
         this.list = list;
         this.clickListener = clickListener;
+        this.context = context;
     }
 
     public String getNetWorth() {
@@ -83,15 +88,18 @@ public class PortfolioSection extends Section {
             itemHolder.getChangeImageView().setVisibility(View.VISIBLE);
             itemHolder.getChangeImageView().setImageResource(portfolio.getChangeImage());
             if (portfolio.getChange() == Change.INCREASE) {
-                itemHolder.getChangePercentageTextView().setTextColor(Color.rgb(0, 179, 0));
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.positiveChange));
+            }
+            else if (portfolio.getChange() == Change.DECREASE) {
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.negativeChange));
             }
             else {
-                itemHolder.getChangePercentageTextView().setTextColor(Color.rgb(255, 0, 38));
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.noChange));
             }
         }
 
         itemHolder.getDetailArrowImageView().setOnClickListener(v ->
-                clickListener.onItemRootViewClicked(portfolio.getTicker())
+                clickListener.onItemRootViewClicked(this, portfolio.getTicker())
         );
     }
 
@@ -112,6 +120,6 @@ public class PortfolioSection extends Section {
     }
 
     public interface ClickListener {
-        void onItemRootViewClicked(String ticker);
+        void onItemRootViewClicked(PortfolioSection portfolioSection, String ticker);
     }
 }

@@ -1,5 +1,6 @@
 package com.csci571.aditya.stockapp.favorite;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 
@@ -10,6 +11,7 @@ import com.csci571.aditya.stockapp.utils.Parser;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
@@ -17,17 +19,18 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 public class FavoriteSection extends Section {
     private List<Favorite> list;
     private FavoriteSection.ClickListener clickListener;
+    private Context context;
 
-    public FavoriteSection(List<Favorite> list, FavoriteSection.ClickListener clickListener) {
+    public FavoriteSection(List<Favorite> list, ClickListener clickListener, Context context) {
 
         super(SectionParameters.builder()
                 .itemResourceId(R.layout.favorite_item)
                 .headerResourceId(R.layout.favorite_header)
                 .footerResourceId(R.layout.tiingo_footer)
                 .build());
-
         this.list = list;
         this.clickListener = clickListener;
+        this.context = context;
     }
 
     public List<Favorite> getList() {
@@ -79,14 +82,18 @@ public class FavoriteSection extends Section {
             itemHolder.getChangeImageView().setVisibility(View.VISIBLE);
             itemHolder.getChangeImageView().setImageResource(favorite.getChangeImage());
             if (favorite.getChange() == Change.INCREASE) {
-                itemHolder.getChangePercentageTextView().setTextColor(Color.rgb(0, 179, 0));
-            } else {
-                itemHolder.getChangePercentageTextView().setTextColor(Color.rgb(255, 0, 38));
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.positiveChange));
+            }
+            else if (favorite.getChange() == Change.DECREASE) {
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.negativeChange));
+            }
+            else {
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.noChange));
             }
         }
 
         itemHolder.getDetailArrowImageView().setOnClickListener(v ->
-                clickListener.onItemRootViewClicked(favorite.getTicker())
+                clickListener.onItemRootViewClicked(this, favorite.getTicker())
         );
     }
 
@@ -101,6 +108,6 @@ public class FavoriteSection extends Section {
     }
 
     public interface ClickListener {
-        void onItemRootViewClicked(String ticker);
+        void onItemRootViewClicked(FavoriteSection favoriteSection, String ticker);
     }
 }
