@@ -119,9 +119,13 @@ public class StockAppClient {
 
         sectionAdapter.notifyDataSetChanged();
 
-        progressBar.setVisibility(View.INVISIBLE);
-        loadingTextView.setVisibility(View.INVISIBLE);
-        recyclerView.setVisibility(View.VISIBLE);
+        if (progressBar.getVisibility() == View.VISIBLE) {
+            progressBar.setVisibility(View.INVISIBLE);
+            loadingTextView.setVisibility(View.INVISIBLE);
+        }
+        if (recyclerView.getVisibility() == View.INVISIBLE) {
+            recyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void fillDetailScreen(ProgressBar progressBar, TextView loadingTextView,

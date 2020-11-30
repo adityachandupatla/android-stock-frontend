@@ -110,7 +110,18 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         homeScreenService = new HomeScreenService(tickerSet,
                 progressBar, loadingTextView, recyclerView, sectionAdapter,
                 getApplicationContext(), handler);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         handler.post(homeScreenService);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        handler.removeCallbacks(homeScreenService);
     }
 
     private double getSharesOfFavoriteStock(String stockTicker, ArrayList<PortfolioStorageModel> portfolioStorageModels) {
