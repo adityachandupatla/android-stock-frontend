@@ -196,4 +196,22 @@ public class AppStorage {
             }
         }
     }
+
+    public static double getSharesOwned(Context context, String ticker) {
+        SharedPreferences pref = context.getSharedPreferences(Constants.PORTFOLIO_PREF_NAME, Context.MODE_PRIVATE);
+        double sharesOwned = 0;
+        Gson gson = new Gson();
+        ArrayList<PortfolioStorageModel> portfolioStorageModels = null;
+        String json = pref.getString(Constants.PORTFOLIO_KEY, "");
+        if (!json.equals("")) {
+            portfolioStorageModels = gson.fromJson(json, new TypeToken<ArrayList<PortfolioStorageModel>>(){}.getType());
+            for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
+                if (portfolioStorageModel.getStockTicker().equals(ticker)) {
+                    sharesOwned = portfolioStorageModel.getSharesOwned();
+                    break;
+                }
+            }
+        }
+        return sharesOwned;
+    }
 }
