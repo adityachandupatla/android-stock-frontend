@@ -108,21 +108,23 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
 
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                double lastPrice = data.getSummaryModel().getLastPrice();
+                double shares = 0;
+                double total = 0;
                 if (cs != null) {
                     String text = cs.toString();
                     if (text.length() > 0) {
                         try {
-                            double shares = Double.parseDouble(text);
-                            double lastPrice = data.getSummaryModel().getLastPrice();
-                            double total = shares * lastPrice;
-                            String sharesComputeString = Parser.beautify(shares) +
-                                    " x $" + Parser.beautify(lastPrice) + "/share = $" + Parser.beautify(total);
-                            sharesComputeTextview.setText(sharesComputeString);
+                            shares = Double.parseDouble(text);
+                            total = shares * lastPrice;
                         } catch (NumberFormatException e) {
-                            // don't do anything
+                            shares = 0;
                         }
                     }
                 }
+                String sharesComputeString = Parser.beautify(shares) +
+                        " x $" + Parser.beautify(lastPrice) + "/share = $" + Parser.beautify(total);
+                sharesComputeTextview.setText(sharesComputeString);
             }
 
             @Override
@@ -165,7 +167,7 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
                         String marketValueText = "Market Value: " + Parser.beautify(newMarketValue);
                         marketValueTextView.setText(marketValueText);
                         dialog.dismiss();
-                        showSuccessDialog();
+                        showSuccessDialog("You have successfully bought " + buyShares + " shares of " + ticker);
                     }
                 } catch(NumberFormatException e) {
                     Toast.makeText(getApplicationContext(), "Please enter valid amount",
@@ -214,7 +216,7 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
                         sharesOwnedTextView.setText(sharesOwnedText);
                         marketValueTextView.setText(marketValueText);
                         dialog.dismiss();
-                        showSuccessDialog();
+                        showSuccessDialog("You have successfully sold " + sellShares + " shares of " + ticker);
                     }
                 } catch(NumberFormatException e) {
                     Toast.makeText(getApplicationContext(), "Please enter valid amount",
@@ -230,11 +232,15 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
         dialog.show();
     }
 
-    private void showSuccessDialog() {
+    private void showSuccessDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View successDialogLayout = getLayoutInflater().inflate(R.layout.success_dialog, null);
         builder.setView(successDialogLayout);
         AlertDialog dialog = builder.create();
+        TextView successMessageTextView = successDialogLayout.findViewById(R.id.success_message);
+        successMessageTextView.setText(message);
+        Button doneButton = successDialogLayout.findViewById(R.id.done_button);
+        doneButton.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
 
@@ -243,11 +249,13 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
         int id = item.getItemId();
         if (id == R.id.action_favorite) {
             if (isFavorite) {
+                item.setIcon(R.drawable.ic_baseline_star_border_24);
                 AppStorage.removeFromFavorite(getApplicationContext(), ticker);
                 Toast.makeText(this, "\"" + ticker + "\" was removed from favorites",
                         Toast.LENGTH_SHORT).show();
             }
             else {
+                item.setIcon(R.drawable.ic_baseline_star_24);
                 String companyName = data.getOutlookModel().getCompanyName();
                 double lastPrice = data.getSummaryModel().getLastPrice();
                 FavoriteStorageModel favoriteStorageModel = new FavoriteStorageModel(ticker, companyName,
