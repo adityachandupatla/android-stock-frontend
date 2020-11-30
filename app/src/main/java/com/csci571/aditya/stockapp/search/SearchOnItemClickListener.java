@@ -1,13 +1,16 @@
 package com.csci571.aditya.stockapp.search;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
 import com.csci571.aditya.stockapp.DetailActivity;
 import com.csci571.aditya.stockapp.MainActivity;
+import com.csci571.aditya.stockapp.R;
 import com.csci571.aditya.stockapp.utils.Constants;
 
 import androidx.appcompat.widget.SearchView;

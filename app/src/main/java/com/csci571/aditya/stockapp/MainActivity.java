@@ -33,6 +33,8 @@ import com.csci571.aditya.stockapp.swipedrag.SwipeDragCallback;
 import com.csci571.aditya.stockapp.utils.Constants;
 import com.csci571.aditya.stockapp.utils.Parser;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -212,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
     @Override
     public void onItemRootViewClicked(PortfolioSection portfolioSection, String ticker) {
         Intent myIntent = new Intent(MainActivity.this, DetailActivity.class);
-        myIntent.putExtra(Constants.INTENT_TICKER_EXTRA,ticker);
+        myIntent.putExtra(Constants.INTENT_TICKER_EXTRA, ticker);
         startActivity(myIntent);
     }
 
