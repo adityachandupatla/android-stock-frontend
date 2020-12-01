@@ -3,6 +3,7 @@ package com.csci571.aditya.stockapp.news;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 
 import com.csci571.aditya.stockapp.R;
@@ -10,10 +11,7 @@ import com.csci571.aditya.stockapp.models.ArticleModel;
 import com.csci571.aditya.stockapp.utils.Parser;
 import com.squareup.picasso.Picasso;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -52,19 +50,23 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ArticleModel articleModel = articles.get(position);
+        if (articleModel == null) {
+            Log.e(TAG, "ArticleModel is NULL in onBindViewHolder()!");
+        }
         if (position == 0) {
             TopNewsViewHolder topNewsViewHolder = (TopNewsViewHolder) holder;
 
             ImageView imageView = topNewsViewHolder.getTopNewsImageView();
-            Picasso.with(imageView.getContext()).load(articleModel.getImageUrl())
-                    .resize(380,250).into(imageView);
+            String imageUrl = articleModel.getImageUrl();
+            if (imageUrl != null && imageUrl.length() > 0 && URLUtil.isValidUrl(imageUrl)) {
+                Picasso.with(imageView.getContext()).load(articleModel.getImageUrl())
+                        .resize(380,250).into(imageView);
+            }
 
             topNewsViewHolder.getTopNewsSourceTextView().setText(articleModel.getSource());
             topNewsViewHolder.getTopNewsDescriptionTextView().setText(articleModel.getTitle());
 
-            String timeAgo = Parser.getTimeAgo(articleModel, position);
-            topNewsViewHolder.getTopNewsTimeagoTextView().setText(timeAgo);
-
+            topNewsViewHolder.getTopNewsTimeagoTextView().setText(Parser.getTimeAgo(articleModel, position));
             topNewsViewHolder.setNewsUrl(articleModel.getArticleUrl());
             topNewsViewHolder.setImageUrl(articleModel.getImageUrl());
         }
@@ -72,15 +74,16 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             RegularNewsViewHolder regularNewsViewHolder = (RegularNewsViewHolder) holder;
 
             ImageView imageView = regularNewsViewHolder.getRegularNewsImageView();
-            Picasso.with(imageView.getContext()).load(articleModel.getImageUrl())
-                    .resize(150,150).into(imageView);
+            String imageUrl = articleModel.getImageUrl();
+            if (imageUrl != null && imageUrl.length() > 0 && URLUtil.isValidUrl(imageUrl)) {
+                Picasso.with(imageView.getContext()).load(articleModel.getImageUrl())
+                        .resize(150,150).into(imageView);
+            }
 
             regularNewsViewHolder.getRegularNewsSourceTextView().setText(articleModel.getSource());
             regularNewsViewHolder.getRegularNewsDescriptionTextView().setText(articleModel.getTitle());
 
-            String timeAgo = Parser.getTimeAgo(articleModel, position);
-            regularNewsViewHolder.getRegularNewsTimeagoTextView().setText(timeAgo);
-
+            regularNewsViewHolder.getRegularNewsTimeagoTextView().setText(Parser.getTimeAgo(articleModel, position));
             regularNewsViewHolder.setNewsUrl(articleModel.getArticleUrl());
             regularNewsViewHolder.setImageUrl(articleModel.getImageUrl());
         }

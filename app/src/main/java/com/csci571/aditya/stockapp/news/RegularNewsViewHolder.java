@@ -45,8 +45,10 @@ public class RegularNewsViewHolder extends ViewHolder {
             AlertDialog dialog = builder.create();
 
             ImageView shareDialogImageView = shareDialogLayout.findViewById(R.id.share_dialog_image);
-            Picasso.with(shareDialogImageView.getContext()).load(imageUrl)
-                    .resize(420,300).into(shareDialogImageView);
+            if (imageUrl != null && imageUrl.length() > 0 && URLUtil.isValidUrl(imageUrl)) {
+                Picasso.with(shareDialogImageView.getContext()).load(imageUrl)
+                        .resize(420,300).into(shareDialogImageView);
+            }
 
             TextView shareDialogNewsTitleTextView = shareDialogLayout.findViewById(R.id.share_dialog_news_title);
             shareDialogNewsTitleTextView.setText(regularNewsDescriptionTextView.getText().toString());
