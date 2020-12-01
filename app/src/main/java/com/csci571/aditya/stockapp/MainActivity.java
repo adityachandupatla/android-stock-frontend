@@ -137,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if (viewHolder.itemView.findViewById(R.id.ticker) != null &&
                         targetHolder.itemView.findViewById(R.id.ticker) != null) {
-//                    Log.i(TAG, "from: " + fromPosition + " to: " + toPosition + " size: " + portfolioList.size());
                     if (fromPosition < toPosition) {
                         for (int i = fromPosition - 1; i < toPosition - 1; i++) {
                             Collections.swap(portfolioList, i, i + 1);
@@ -149,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                     AppStorage.updatePortfolioOrder(getApplicationContext(), portfolioList);
                     sectionAdapter.notifyItemMoved(fromPosition, toPosition);
-//                    Log.i(TAG, "New Size: " + portfolioList.size());
                     return super.onMove(recyclerView, viewHolder, targetHolder);
                 }
                 if (viewHolder.itemView.findViewById(R.id.ticker_fav) != null &&
@@ -159,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
                     int offset = portfolioList.size() + 1;
                     fromPosition -= offset;
                     toPosition -= offset;
-//                    Log.i(TAG, "from: " + fromPosition + " to: " + toPosition + " size: " + favoriteList.size());
                     if (fromPosition < toPosition) {
                         for (int i = fromPosition - 1; i < toPosition - 1; i++) {
                             Collections.swap(favoriteList, i, i + 1);
@@ -172,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
                     AppStorage.updateFavoriteOrder(getApplicationContext(), favoriteList);
                     // re-add the offsets
                     sectionAdapter.notifyItemMoved(fromPosition + offset, toPosition + offset);
-//                    Log.i(TAG, "New Size: " + favoriteList.size());
                     return super.onMove(recyclerView, viewHolder, targetHolder);
                 }
                 return false;
