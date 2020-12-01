@@ -286,9 +286,16 @@
                     android:id="@+id/aboutContentTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black"
+                    android:layout_marginBottom="30dp"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     android:padding="5dp"
+                    android:singleLine="false"
                     android:text="@string/sample_detail_about_textview"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/aboutLabelTextView" />
 
@@ -303,6 +310,18 @@
                     android:text="@string/detailscreen_about_section_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/toggleAboutDescTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="TextView"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/aboutContentTextView" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>

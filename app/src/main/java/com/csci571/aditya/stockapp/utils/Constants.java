@@ -42,5 +42,6 @@ public class Constants {
     public static final String INTENT_TICKER_EXTRA = "IntentTicker";
     public static final String HIGHCHARTS_ASSET_PATH = "file:///android_asset/highcharts.html";
     public static final String JS_FUNCTION_BUILDER_TEMPLATE = "javascript:plotChart(\"%s\", \"%s\");";
-
+    public static final String SHOW_MORE_MESSAGE = "Show more...";
+    public static final String SHOW_LESS_MESSAGE = "Show less";
 }

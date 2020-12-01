@@ -2,8 +2,10 @@ package com.csci571.aditya.stockapp.network;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -212,6 +214,42 @@ public class StockAppClient {
 
         TextView aboutContentTextView = nestedScrollView.findViewById(R.id.aboutContentTextView);
         aboutContentTextView.setText(outlookModel.getDescription());
+        TextView toggleAboutDescTextView = nestedScrollView.findViewById(R.id.toggleAboutDescTextView);
+        toggleAboutDescTextView.setOnClickListener(v -> {
+            if (v.getVisibility() == View.VISIBLE) {
+                TextView textView = ((TextView) v);
+                String message = textView.getText().toString();
+                if (message.equals(Constants.SHOW_MORE_MESSAGE)) {
+                    aboutContentTextView.setMaxLines(Integer.MAX_VALUE);
+                    textView.setText(Constants.SHOW_LESS_MESSAGE);
+                }
+                else {
+                    aboutContentTextView.setMaxLines(2);
+                    textView.setText(Constants.SHOW_MORE_MESSAGE);
+                }
+            }
+        });
+        ViewTreeObserver vto = aboutContentTextView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(() -> {
+            Layout layout = aboutContentTextView.getLayout();
+            if(layout != null) {
+                int lines = layout.getLineCount();
+                if(lines > 0) {
+                    int ellipsisCount = layout.getEllipsisCount(lines - 1);
+                    if (ellipsisCount > 0) {
+                        toggleAboutDescTextView.setText(Constants.SHOW_MORE_MESSAGE);
+                    }
+                    else {
+                        if (lines > 2) {
+                            toggleAboutDescTextView.setText(Constants.SHOW_LESS_MESSAGE);
+                        }
+                        else {
+                            toggleAboutDescTextView.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                }
+            }
+        });
 
         WebView webview = nestedScrollView.findViewById(R.id.highcharts_webview);
         webview.getSettings().setJavaScriptEnabled(true);
