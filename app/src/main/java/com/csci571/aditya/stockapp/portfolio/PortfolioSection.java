@@ -47,8 +47,7 @@ public class PortfolioSection extends Section {
         List<Portfolio> portfolioList = new ArrayList<>();
         for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
             portfolioList.add(new Portfolio(portfolioStorageModel.getStockTicker(),
-                    portfolioStorageModel.getSharesOwned(), 0, 0,
-                    portfolioStorageModel.getTotalAmount()));
+                    portfolioStorageModel.getSharesOwned(), portfolioStorageModel.getTotalAmount()));
         }
         this.list = portfolioList;
 

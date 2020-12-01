@@ -18,15 +18,18 @@ public class Portfolio {
     @DrawableRes
     private int changeImage;
 
-    public Portfolio(String ticker, double shares, double stockPrice, double changePercentage, double totalAmountOwned) {
+    public Portfolio(String ticker, double shares, double totalAmountOwned) {
         this.ticker = ticker;
         this.shares = shares;
         this.totalAmountOwned = totalAmountOwned;
-        this.stockPrice = stockPrice;
-        this.changePercentage = changePercentage;
+
+        this.detailArrowImage = R.drawable.ic_baseline_keyboard_arrow_right_24;
+
+        // These are default values
+        this.stockPrice = 0;
+        this.changePercentage = 0;
         this.change = Change.SAME;
         this.changeImage = -1;
-        this.detailArrowImage = R.drawable.ic_baseline_keyboard_arrow_right_24;
     }
 
     public void updateChangeImage() {

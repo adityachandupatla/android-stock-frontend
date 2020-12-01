@@ -46,7 +46,7 @@ public class FavoriteSection extends Section {
             double shares = getSharesOfFavoriteStock(favoriteStorageModel.getStockTicker(),
                     AppStorage.getPortfolio(applicationContext));
             favList.add(new Favorite(favoriteStorageModel.getStockTicker(), shares, favoriteStorageModel.getCompanyName(),
-                    0, 0, favoriteStorageModel.getLastPrice()));
+                    favoriteStorageModel.getLastPrice()));
         }
 
         this.list = favList;
