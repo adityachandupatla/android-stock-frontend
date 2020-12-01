@@ -96,7 +96,6 @@ public class FavoriteSection extends Section {
 
         itemHolder.getTickerTextView().setText(favorite.getTicker());
 
-        // TODO: Determine whether we need to display share value or company name
         itemHolder.getInfoTextView().setText(buildSharesText(favorite));
 
         itemHolder.getStockPriceTextView().setText(Parser.beautify(favorite.getStockPrice()));
@@ -145,6 +144,6 @@ public class FavoriteSection extends Section {
     public void onItemRootViewClicked(String ticker) {
         Intent myIntent = new Intent(mainActivityContext, DetailActivity.class);
         myIntent.putExtra(Constants.INTENT_TICKER_EXTRA, ticker);
-        ((Activity) mainActivityContext).startActivity(myIntent);
+        mainActivityContext.startActivity(myIntent);
     }
 }

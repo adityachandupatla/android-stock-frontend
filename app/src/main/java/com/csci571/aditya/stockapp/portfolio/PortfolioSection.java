@@ -142,6 +142,6 @@ public class PortfolioSection extends Section {
     public void onItemRootViewClicked(String ticker) {
         Intent myIntent = new Intent(mainActivityContext, DetailActivity.class);
         myIntent.putExtra(Constants.INTENT_TICKER_EXTRA, ticker);
-        ((Activity) mainActivityContext).startActivity(myIntent);
+        mainActivityContext.startActivity(myIntent);
     }
 }

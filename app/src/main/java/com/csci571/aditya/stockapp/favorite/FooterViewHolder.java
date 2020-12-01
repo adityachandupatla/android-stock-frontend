@@ -16,13 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 final class FooterViewHolder extends RecyclerView.ViewHolder {
 
-    final View rootView;
-
-    FooterViewHolder(@NonNull final View view) {
+    public FooterViewHolder(@NonNull final View view) {
         super(view);
 
-        rootView = view;
-        ((TextView) rootView.findViewById(R.id.tiingo_footer)).setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) view.findViewById(R.id.tiingo_footer)).setMovementMethod(LinkMovementMethod.getInstance());
 
         Spannable s = (Spannable) Html.fromHtml(view.getResources().getString(R.string.tiingo_linktext), 0);
         for (URLSpan u: s.getSpans(0, s.length(), URLSpan.class)) {
@@ -32,6 +29,6 @@ final class FooterViewHolder extends RecyclerView.ViewHolder {
                 }
             }, s.getSpanStart(u), s.getSpanEnd(u), 0);
         }
-        ((TextView) rootView.findViewById(R.id.tiingo_footer)).setText(s);
+        ((TextView) view.findViewById(R.id.tiingo_footer)).setText(s);
     }
 }
