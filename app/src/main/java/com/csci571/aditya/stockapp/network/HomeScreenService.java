@@ -5,6 +5,11 @@ import android.os.Handler;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.csci571.aditya.stockapp.localstorage.AppStorage;
+import com.csci571.aditya.stockapp.localstorage.FavoriteStorageModel;
+import com.csci571.aditya.stockapp.localstorage.PortfolioStorageModel;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,10 +25,10 @@ public class HomeScreenService implements Runnable {
     private Context applicationContext;
     private Handler handler;
 
-    public HomeScreenService(HashSet<String> tickerSet, ProgressBar progressBar, TextView loadingTextView,
+    public HomeScreenService(ProgressBar progressBar, TextView loadingTextView,
                              RecyclerView recyclerView, SectionedRecyclerViewAdapter sectionAdapter,
                              Context applicationContext, Handler handler) {
-        this.tickerSet = tickerSet;
+        this.tickerSet = uniqueTickers(AppStorage.getPortfolio(applicationContext), AppStorage.getFavorites(applicationContext));
         this.progressBar = progressBar;
         this.loadingTextView = loadingTextView;
         this.recyclerView = recyclerView;
@@ -37,5 +42,16 @@ public class HomeScreenService implements Runnable {
         StockAppClient.getInstance(applicationContext).fetchHomeScreenData(tickerSet,
                 progressBar, loadingTextView, recyclerView, sectionAdapter);
         handler.postDelayed(this, 15000);
+    }
+
+    private HashSet<String> uniqueTickers(ArrayList<PortfolioStorageModel> portfolioStorageModels, ArrayList<FavoriteStorageModel> favoriteStorageModels) {
+        HashSet<String> myset = new HashSet<>();
+        for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
+            myset.add(portfolioStorageModel.getStockTicker());
+        }
+        for (FavoriteStorageModel favoriteStorageModel: favoriteStorageModels) {
+            myset.add(favoriteStorageModel.getStockTicker());
+        }
+        return myset;
     }
 }
