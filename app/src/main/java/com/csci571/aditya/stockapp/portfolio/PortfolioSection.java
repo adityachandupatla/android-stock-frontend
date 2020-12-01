@@ -41,6 +41,7 @@ public class PortfolioSection extends Section {
         this.mainActivityContext = mainActivityContext;
         this.applicationContext = applicationContext;
 
+        // by default net worth will be equal to uninvested cash
         this.netWorth = Parser.beautify(AppStorage.getUninvestedCash(applicationContext));
 
         ArrayList<PortfolioStorageModel> portfolioStorageModels = AppStorage.getPortfolio(applicationContext);
