@@ -31,8 +31,7 @@ public class SearchMain {
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
 
         // Get SearchView autocomplete object.
-        final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView
-                .findViewById(R.id.search_src_text);
+        final SearchView.SearchAutoComplete searchAutoComplete = searchView.findViewById(R.id.search_src_text);
 
         AutoSuggestAdapter autoSuggestAdapter = new AutoSuggestAdapter(context,
                 android.R.layout.simple_dropdown_item_1line);
@@ -47,7 +46,17 @@ public class SearchMain {
         // Listen to text changes
         searchAutoComplete.addTextChangedListener(new SearchTextWatcher(TRIGGER_AUTO_COMPLETE, AUTO_COMPLETE_DELAY, handler));
         // Listen to submit events
-        searchView.setOnQueryTextListener(new SearchOnQueryTextListener());
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
 
         searchMenuItem.setOnActionExpandListener(new SearchMenuExpandListener(searchView,
                 inputMethodManager));

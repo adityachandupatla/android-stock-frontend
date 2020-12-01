@@ -11,10 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 
 public class SearchHandler implements Handler.Callback {
-    private int TRIGGER_AUTO_COMPLETE;
-    private SearchView.SearchAutoComplete searchAutoComplete;
-    private Context context;
-    private AutoSuggestAdapter autoSuggestAdapter;
+    private final int TRIGGER_AUTO_COMPLETE;
+    private final SearchView.SearchAutoComplete searchAutoComplete;
+    private final Context context;
+    private final AutoSuggestAdapter autoSuggestAdapter;
 
     public SearchHandler(int TRIGGER_AUTO_COMPLETE, SearchView.SearchAutoComplete searchAutoComplete,
                          Context context, AutoSuggestAdapter autoSuggestAdapter) {
