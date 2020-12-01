@@ -57,4 +57,13 @@
     <string name="congratulations">Congratulations!</string>
     <string name="success_message">You have successfully bought 2 shares of AMZN</string>
     <string name="done">DONE</string>
+    <string name="sample_about_toggle_textview">TextView</string>
+    <string name="detailscreen_news_section_label">News</string>
+    <string name="sample_news_source">Business Insider</string>
+    <string name="sample_days_ago">2 days ago</string>
+    <string name="sample_amzn_news_desc">Amazon Web Services reports $11.6 billion third-quarter revenue, up 29% year over year (AMZN)</string>
+    <string name="news_item_display_image">News Item Display Image</string>
+    <string name="news_image_icon">News Image Icon</string>
+    <string name="twitter_share_icon">Twitter share icon</string>
+    <string name="chrome_view_icon">Chrome view icon</string>
 </resources>
