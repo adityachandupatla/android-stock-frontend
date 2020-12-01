@@ -26,8 +26,8 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 
 public class FavoriteSection extends Section {
     private List<Favorite> list;
-    private Context applicationContext;
-    private Context mainActivityContext;
+    private final Context applicationContext;
+    private final Context mainActivityContext;
 
     public FavoriteSection(Context mainActivityContext, Context applicationContext) {
 
@@ -50,22 +50,6 @@ public class FavoriteSection extends Section {
         }
 
         this.list = favList;
-    }
-
-    public Context getApplicationContext() {
-        return applicationContext;
-    }
-
-    public void setApplicationContext(Context applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    public Context getMainActivityContext() {
-        return mainActivityContext;
-    }
-
-    public void setMainActivityContext(Context mainActivityContext) {
-        this.mainActivityContext = mainActivityContext;
     }
 
     public List<Favorite> getList() {

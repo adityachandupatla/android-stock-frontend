@@ -28,8 +28,8 @@ public class PortfolioSection extends Section {
 
     private String netWorth;
     private List<Portfolio> list;
-    private Context applicationContext;
-    private Context mainActivityContext;
+    private final Context applicationContext;
+    private final Context mainActivityContext;
 
     public PortfolioSection(Context mainActivityContext, Context applicationContext) {
 
@@ -52,22 +52,6 @@ public class PortfolioSection extends Section {
         }
         this.list = portfolioList;
 
-    }
-
-    public Context getApplicationContext() {
-        return applicationContext;
-    }
-
-    public void setApplicationContext(Context applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    public Context getMainActivityContext() {
-        return mainActivityContext;
-    }
-
-    public void setMainActivityContext(Context mainActivityContext) {
-        this.mainActivityContext = mainActivityContext;
     }
 
     public String getNetWorth() {
