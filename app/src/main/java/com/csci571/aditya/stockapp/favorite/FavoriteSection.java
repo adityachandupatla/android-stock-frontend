@@ -1,13 +1,21 @@
 package com.csci571.aditya.stockapp.favorite;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 
+import com.csci571.aditya.stockapp.DetailActivity;
 import com.csci571.aditya.stockapp.R;
+import com.csci571.aditya.stockapp.localstorage.AppStorage;
+import com.csci571.aditya.stockapp.localstorage.FavoriteStorageModel;
+import com.csci571.aditya.stockapp.localstorage.PortfolioStorageModel;
 import com.csci571.aditya.stockapp.utils.Change;
+import com.csci571.aditya.stockapp.utils.Constants;
 import com.csci571.aditya.stockapp.utils.Parser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -18,19 +26,46 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 
 public class FavoriteSection extends Section {
     private List<Favorite> list;
-    private FavoriteSection.ClickListener clickListener;
-    private Context context;
+    private Context applicationContext;
+    private Context mainActivityContext;
 
-    public FavoriteSection(List<Favorite> list, ClickListener clickListener, Context context) {
+    public FavoriteSection(Context mainActivityContext, Context applicationContext) {
 
         super(SectionParameters.builder()
                 .itemResourceId(R.layout.favorite_item)
                 .headerResourceId(R.layout.favorite_header)
                 .footerResourceId(R.layout.tiingo_footer)
                 .build());
-        this.list = list;
-        this.clickListener = clickListener;
-        this.context = context;
+
+        this.mainActivityContext = mainActivityContext;
+        this.applicationContext = applicationContext;
+
+        ArrayList<FavoriteStorageModel> favoriteStorageModels = AppStorage.getFavorites(applicationContext);
+        List<Favorite> favList = new ArrayList<>();
+        for (FavoriteStorageModel favoriteStorageModel: favoriteStorageModels) {
+            double shares = getSharesOfFavoriteStock(favoriteStorageModel.getStockTicker(),
+                    AppStorage.getPortfolio(applicationContext));
+            favList.add(new Favorite(favoriteStorageModel.getStockTicker(), shares, favoriteStorageModel.getCompanyName(),
+                    0, 0, favoriteStorageModel.getLastPrice()));
+        }
+
+        this.list = favList;
+    }
+
+    public Context getApplicationContext() {
+        return applicationContext;
+    }
+
+    public void setApplicationContext(Context applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    public Context getMainActivityContext() {
+        return mainActivityContext;
+    }
+
+    public void setMainActivityContext(Context mainActivityContext) {
+        this.mainActivityContext = mainActivityContext;
     }
 
     public List<Favorite> getList() {
@@ -60,6 +95,15 @@ public class FavoriteSection extends Section {
         }
     }
 
+    private double getSharesOfFavoriteStock(String stockTicker, ArrayList<PortfolioStorageModel> portfolioStorageModels) {
+        for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
+            if (portfolioStorageModel.getStockTicker().equals(stockTicker)) {
+                return portfolioStorageModel.getSharesOwned();
+            }
+        }
+        return 0;
+    }
+
     @Override
     public void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder itemHolder = (ItemViewHolder) holder;
@@ -82,18 +126,21 @@ public class FavoriteSection extends Section {
             itemHolder.getChangeImageView().setVisibility(View.VISIBLE);
             itemHolder.getChangeImageView().setImageResource(favorite.getChangeImage());
             if (favorite.getChange() == Change.INCREASE) {
-                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.positiveChange));
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(applicationContext,
+                        R.color.positiveChange));
             }
             else if (favorite.getChange() == Change.DECREASE) {
-                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.negativeChange));
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(applicationContext,
+                        R.color.negativeChange));
             }
             else {
-                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.noChange));
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(applicationContext,
+                        R.color.noChange));
             }
         }
 
         itemHolder.getDetailArrowImageView().setOnClickListener(v ->
-                clickListener.onItemRootViewClicked(this, favorite.getTicker())
+                onItemRootViewClicked(favorite.getTicker())
         );
     }
 
@@ -107,7 +154,9 @@ public class FavoriteSection extends Section {
         return new FooterViewHolder(view);
     }
 
-    public interface ClickListener {
-        void onItemRootViewClicked(FavoriteSection favoriteSection, String ticker);
+    public void onItemRootViewClicked(String ticker) {
+        Intent myIntent = new Intent(mainActivityContext, DetailActivity.class);
+        myIntent.putExtra(Constants.INTENT_TICKER_EXTRA, ticker);
+        ((Activity) mainActivityContext).startActivity(myIntent);
     }
 }

@@ -1,18 +1,24 @@
 package com.csci571.aditya.stockapp.portfolio;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 
+import com.csci571.aditya.stockapp.DetailActivity;
+import com.csci571.aditya.stockapp.MainActivity;
 import com.csci571.aditya.stockapp.R;
-import com.csci571.aditya.stockapp.favorite.FavoriteSection;
+import com.csci571.aditya.stockapp.localstorage.AppStorage;
+import com.csci571.aditya.stockapp.localstorage.PortfolioStorageModel;
 import com.csci571.aditya.stockapp.utils.Change;
+import com.csci571.aditya.stockapp.utils.Constants;
 import com.csci571.aditya.stockapp.utils.Parser;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section;
@@ -22,20 +28,46 @@ public class PortfolioSection extends Section {
 
     private String netWorth;
     private List<Portfolio> list;
-    private ClickListener clickListener;
-    private Context context;
+    private Context applicationContext;
+    private Context mainActivityContext;
 
-    public PortfolioSection(String netWorth, List<Portfolio> list, ClickListener clickListener, Context context) {
+    public PortfolioSection(Context mainActivityContext, Context applicationContext) {
 
         super(SectionParameters.builder()
                 .itemResourceId(R.layout.portfolio_item)
                 .headerResourceId(R.layout.portfolio_header)
                 .build());
 
-        this.netWorth = netWorth;
-        this.list = list;
-        this.clickListener = clickListener;
-        this.context = context;
+        this.mainActivityContext = mainActivityContext;
+        this.applicationContext = applicationContext;
+
+        this.netWorth = Parser.beautify(AppStorage.getUninvestedCash(applicationContext));
+
+        ArrayList<PortfolioStorageModel> portfolioStorageModels = AppStorage.getPortfolio(applicationContext);
+        List<Portfolio> portfolioList = new ArrayList<>();
+        for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
+            portfolioList.add(new Portfolio(portfolioStorageModel.getStockTicker(),
+                    portfolioStorageModel.getSharesOwned(), 0, 0,
+                    portfolioStorageModel.getTotalAmount()));
+        }
+        this.list = portfolioList;
+
+    }
+
+    public Context getApplicationContext() {
+        return applicationContext;
+    }
+
+    public void setApplicationContext(Context applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    public Context getMainActivityContext() {
+        return mainActivityContext;
+    }
+
+    public void setMainActivityContext(Context mainActivityContext) {
+        this.mainActivityContext = mainActivityContext;
     }
 
     public String getNetWorth() {
@@ -88,18 +120,18 @@ public class PortfolioSection extends Section {
             itemHolder.getChangeImageView().setVisibility(View.VISIBLE);
             itemHolder.getChangeImageView().setImageResource(portfolio.getChangeImage());
             if (portfolio.getChange() == Change.INCREASE) {
-                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.positiveChange));
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(applicationContext, R.color.positiveChange));
             }
             else if (portfolio.getChange() == Change.DECREASE) {
-                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.negativeChange));
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(applicationContext, R.color.negativeChange));
             }
             else {
-                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(context, R.color.noChange));
+                itemHolder.getChangePercentageTextView().setTextColor(ContextCompat.getColor(applicationContext, R.color.noChange));
             }
         }
 
         itemHolder.getDetailArrowImageView().setOnClickListener(v ->
-                clickListener.onItemRootViewClicked(this, portfolio.getTicker())
+                onItemRootViewClicked(portfolio.getTicker())
         );
     }
 
@@ -119,7 +151,9 @@ public class PortfolioSection extends Section {
         headerHolder.getDateTextView().setText(dateText);
     }
 
-    public interface ClickListener {
-        void onItemRootViewClicked(PortfolioSection portfolioSection, String ticker);
+    public void onItemRootViewClicked(String ticker) {
+        Intent myIntent = new Intent(mainActivityContext, DetailActivity.class);
+        myIntent.putExtra(Constants.INTENT_TICKER_EXTRA, ticker);
+        ((Activity) mainActivityContext).startActivity(myIntent);
     }
 }

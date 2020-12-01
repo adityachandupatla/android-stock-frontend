@@ -41,7 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements PortfolioSection.ClickListener, FavoriteSection.ClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private SectionedRecyclerViewAdapter sectionAdapter;
@@ -65,31 +65,13 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         SearchMain.implementSearch(myToolbar, (SearchManager) getSystemService(Context.SEARCH_SERVICE), getComponentName(),
                 this, getApplicationContext(), (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE));
 
-        double uninvestedCash = AppStorage.getUninvestedCash(getApplicationContext());
-        ArrayList<PortfolioStorageModel> portfolioStorageModels = AppStorage.getPortfolio(getApplicationContext());
-        ArrayList<FavoriteStorageModel> favoriteStorageModels = AppStorage.getFavorites(getApplicationContext());
-        HashSet<String> tickerSet = uniqueTickers(portfolioStorageModels, favoriteStorageModels);
-
         sectionAdapter = new SectionedRecyclerViewAdapter();
 
-        List<Portfolio> portfolioList = new ArrayList<>();
-        for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
-            portfolioList.add(new Portfolio(portfolioStorageModel.getStockTicker(),
-                    portfolioStorageModel.getSharesOwned(), 0, 0,
-                    portfolioStorageModel.getTotalAmount()));
-        }
         sectionAdapter.addSection(Constants.PORTFOLIO_SECTION_TAG,
-                new PortfolioSection(Parser.beautify(uninvestedCash), portfolioList,
-                        this, getApplicationContext()));
+                new PortfolioSection(MainActivity.this, getApplicationContext()));
 
-        List<Favorite> favList = new ArrayList<>();
-        for (FavoriteStorageModel favoriteStorageModel: favoriteStorageModels) {
-            double shares = getSharesOfFavoriteStock(favoriteStorageModel.getStockTicker(), portfolioStorageModels);
-            favList.add(new Favorite(favoriteStorageModel.getStockTicker(), shares, favoriteStorageModel.getCompanyName(),
-                    0, 0, favoriteStorageModel.getLastPrice()));
-        }
         sectionAdapter.addSection(Constants.FAVORITE_SECTION_TAG,
-                new FavoriteSection(favList, this, getApplicationContext()));
+                new FavoriteSection(MainActivity.this, getApplicationContext()));
 
         recyclerView = findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -107,8 +89,7 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
         loadingTextView.setVisibility(View.VISIBLE);
 
         handler = new Handler();
-        homeScreenService = new HomeScreenService(tickerSet,
-                progressBar, loadingTextView, recyclerView, sectionAdapter,
+        homeScreenService = new HomeScreenService(progressBar, loadingTextView, recyclerView, sectionAdapter,
                 getApplicationContext(), handler);
     }
 
@@ -122,26 +103,6 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
     protected void onStop() {
         super.onStop();
         handler.removeCallbacks(homeScreenService);
-    }
-
-    private double getSharesOfFavoriteStock(String stockTicker, ArrayList<PortfolioStorageModel> portfolioStorageModels) {
-        for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
-            if (portfolioStorageModel.getStockTicker().equals(stockTicker)) {
-                return portfolioStorageModel.getSharesOwned();
-            }
-        }
-        return 0;
-    }
-
-    private HashSet<String> uniqueTickers(ArrayList<PortfolioStorageModel> portfolioStorageModels, ArrayList<FavoriteStorageModel> favoriteStorageModels) {
-        HashSet<String> myset = new HashSet<>();
-        for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
-            myset.add(portfolioStorageModel.getStockTicker());
-        }
-        for (FavoriteStorageModel favoriteStorageModel: favoriteStorageModels) {
-            myset.add(favoriteStorageModel.getStockTicker());
-        }
-        return myset;
     }
 
     private void enableSwipeDrag() {
@@ -220,19 +181,5 @@ public class MainActivity extends AppCompatActivity implements PortfolioSection.
 
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeDragCallback);
         itemTouchhelper.attachToRecyclerView(recyclerView);
-    }
-
-    @Override
-    public void onItemRootViewClicked(PortfolioSection portfolioSection, String ticker) {
-        Intent myIntent = new Intent(MainActivity.this, DetailActivity.class);
-        myIntent.putExtra(Constants.INTENT_TICKER_EXTRA, ticker);
-        startActivity(myIntent);
-    }
-
-    @Override
-    public void onItemRootViewClicked(FavoriteSection favoriteSection, String ticker) {
-        Intent myIntent = new Intent(MainActivity.this, DetailActivity.class);
-        myIntent.putExtra(Constants.INTENT_TICKER_EXTRA, ticker);
-        startActivity(myIntent);
     }
 }
