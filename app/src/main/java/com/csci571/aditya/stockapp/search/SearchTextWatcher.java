@@ -6,9 +6,9 @@ import android.text.TextWatcher;
 
 public class SearchTextWatcher implements TextWatcher {
 
-    private int TRIGGER_AUTO_COMPLETE;
-    private long AUTO_COMPLETE_DELAY;
-    private Handler handler;
+    private final int TRIGGER_AUTO_COMPLETE;
+    private final long AUTO_COMPLETE_DELAY;
+    private final Handler handler;
 
     public SearchTextWatcher(int TRIGGER_AUTO_COMPLETE, long AUTO_COMPLETE_DELAY, Handler handler) {
         this.TRIGGER_AUTO_COMPLETE = TRIGGER_AUTO_COMPLETE;
@@ -28,7 +28,7 @@ public class SearchTextWatcher implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
-        if (s.toString().length() >= 3) {
+        if (s != null && s.toString().length() >= 3) {
             // notify handler only when characters are >= 3
             handler.sendEmptyMessageDelayed(TRIGGER_AUTO_COMPLETE,
                     AUTO_COMPLETE_DELAY);
