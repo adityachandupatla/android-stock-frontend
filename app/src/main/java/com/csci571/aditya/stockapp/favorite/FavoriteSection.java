@@ -100,7 +100,11 @@ public class FavoriteSection extends Section {
         itemHolder.getInfoTextView().setText(buildSharesText(favorite));
 
         itemHolder.getStockPriceTextView().setText(Parser.beautify(favorite.getStockPrice()));
-        itemHolder.getChangePercentageTextView().setText(Parser.beautify(favorite.getChangePercentage()));
+        double changePercentage = favorite.getChangePercentage();
+        if (changePercentage < 0) {
+            changePercentage = -1 * changePercentage;
+        }
+        itemHolder.getChangePercentageTextView().setText(Parser.beautify(changePercentage));
 
         itemHolder.getDetailArrowImageView().setImageResource(favorite.getDetailArrowImage());
         if (favorite.getChange() == Change.SAME) {

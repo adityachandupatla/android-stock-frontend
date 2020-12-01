@@ -92,7 +92,11 @@ public class PortfolioSection extends Section {
         itemHolder.getTickerTextView().setText(portfolio.getTicker());
         itemHolder.getSharesTextView().setText(buildSharesText(portfolio.getShares()));
         itemHolder.getStockPriceTextView().setText(Parser.beautify(portfolio.getStockPrice()));
-        itemHolder.getChangePercentageTextView().setText(Parser.beautify(portfolio.getChangePercentage()));
+        double changePercentage = portfolio.getChangePercentage();
+        if (changePercentage < 0) {
+            changePercentage = -1 * changePercentage;
+        }
+        itemHolder.getChangePercentageTextView().setText(Parser.beautify(changePercentage));
 
         itemHolder.getDetailArrowImageView().setImageResource(portfolio.getDetailArrowImage());
         if (portfolio.getChange() == Change.SAME) {

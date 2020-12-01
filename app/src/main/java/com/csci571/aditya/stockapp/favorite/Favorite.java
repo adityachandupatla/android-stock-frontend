@@ -43,7 +43,6 @@ public class Favorite {
         else if (changePercentage < 0) {
             this.change = Change.DECREASE;
             this.changeImage = R.drawable.ic_baseline_trending_down_24;
-            this.changePercentage *= -1;
         }
         else {
             this.change = Change.SAME;
