@@ -28,9 +28,8 @@ public class SearchHandler implements Handler.Callback {
     public boolean handleMessage(@NonNull Message msg) {
         if (msg.what == TRIGGER_AUTO_COMPLETE) {
             if (!TextUtils.isEmpty(searchAutoComplete.getText())) {
-                StockAppClient.getInstance(context)
-                        .fetchAutoSuggestData(searchAutoComplete.getText().toString(),
-                                autoSuggestAdapter);
+                StockAppClient.getInstance().fetchAutoSuggestData(searchAutoComplete.getText().toString(),
+                                autoSuggestAdapter, context);
             }
         }
         return false;

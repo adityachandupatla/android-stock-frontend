@@ -49,24 +49,21 @@ public class StockAppClient {
 
     private static StockAppClient mInstance;
     private static final String TAG = "com.csci571.aditya.stockapp.network.StockAppClient";
-    private String host;
-    private Context mCtx;
+    private final String host;
 
-    private StockAppClient(Context context) {
-        host = Constants.DEVELOPMENT_HOST;
-        mCtx = context;
-//        host = Constants.PROD_HOST;
+    private StockAppClient() {
+        host = Constants.HOST;
     }
 
-    public static synchronized StockAppClient getInstance(Context context) {
+    public static synchronized StockAppClient getInstance() {
         if (mInstance == null) {
-            mInstance = new StockAppClient(context);
+            mInstance = new StockAppClient();
         }
         return mInstance;
     }
 
     // Custom JSON Request Handler
-    private void makeRequest(final String url, final VolleyCallback callback) {
+    private void makeRequest(final String url, final VolleyCallback callback, Context context) {
         //Pass response to success callback
         CustomJSONObjectRequest rq = new CustomJSONObjectRequest(Request.Method.GET,
                 url, null, result -> {
@@ -84,11 +81,11 @@ public class StockAppClient {
         });
 
         // Request added to the RequestQueue
-        VolleyController.getInstance(mCtx).addToRequestQueue(rq);
+        VolleyController.getInstance(context).addToRequestQueue(rq);
     }
 
     private void fillHomeScreen(ProgressBar progressBar, TextView loadingTextView, RecyclerView recyclerView,
-                                SectionedRecyclerViewAdapter sectionAdapter, Map<String, Double> map) {
+                                SectionedRecyclerViewAdapter sectionAdapter, Map<String, Double> map, Context context) {
 
         PortfolioSection portfolioSection = (PortfolioSection) sectionAdapter.getSection(Constants.PORTFOLIO_SECTION_TAG);
         List<Portfolio> portfolioList = portfolioSection.getList();
@@ -104,7 +101,7 @@ public class StockAppClient {
                 stockWorth += currentStockPrice * portfolio.getShares();
             }
         }
-        double uninvestedCash = AppStorage.getUninvestedCash(mCtx);
+        double uninvestedCash = AppStorage.getUninvestedCash(context);
         portfolioSection.setNetWorth(Parser.beautify(uninvestedCash + stockWorth));
 
         FavoriteSection favoriteSection = (FavoriteSection) sectionAdapter.getSection(Constants.FAVORITE_SECTION_TAG);
@@ -131,7 +128,8 @@ public class StockAppClient {
     }
 
     private void fillDetailScreen(ProgressBar progressBar, TextView loadingTextView,
-                                  NestedScrollView nestedScrollView, NewsAdapter newsAdapter, DetailScreenWrapperModel data) {
+                                  NestedScrollView nestedScrollView, NewsAdapter newsAdapter,
+                                  DetailScreenWrapperModel data, Context context) {
 
         OutlookModel outlookModel = data.getOutlookModel();
         SummaryModel summaryModel = data.getSummaryModel();
@@ -155,21 +153,21 @@ public class StockAppClient {
         double change = summaryModel.getLastPrice() - summaryModel.getPreviousClosingPrice();
         if (change > 0) {
             changeDisplayText = "$" + Parser.beautify(change);
-            changeTextView.setTextColor(ContextCompat.getColor(mCtx, R.color.positiveChange));
+            changeTextView.setTextColor(ContextCompat.getColor(context, R.color.positiveChange));
         }
         else if (change < 0) {
             changeDisplayText = "-$" + Parser.beautify(-1 * change);
-            changeTextView.setTextColor(ContextCompat.getColor(mCtx, R.color.negativeChange));
+            changeTextView.setTextColor(ContextCompat.getColor(context, R.color.negativeChange));
         }
         else {
             changeDisplayText = "$0";
-            changeTextView.setTextColor(ContextCompat.getColor(mCtx, R.color.noChange));
+            changeTextView.setTextColor(ContextCompat.getColor(context, R.color.noChange));
         }
         changeTextView.setText(changeDisplayText);
 
         TextView sharesOwnedTextView = nestedScrollView.findViewById(R.id.sharesOwnedTextView);
         TextView marketValueTextView = nestedScrollView.findViewById(R.id.marketValueTextView);
-        double sharesOwned = AppStorage.getSharesOwned(mCtx, ticker);
+        double sharesOwned = AppStorage.getSharesOwned(context, ticker);
         String sharesOwnedDisplayText;
         String marketValueDisplayText;
         if (sharesOwned > 0) {
@@ -277,7 +275,8 @@ public class StockAppClient {
     }
 
     public void fetchHomeScreenData(HashSet<String> tickerSet, ProgressBar progressBar,
-                                    TextView loadingTextView, RecyclerView recyclerView, SectionedRecyclerViewAdapter sectionAdapter) {
+                                    TextView loadingTextView, RecyclerView recyclerView,
+                                    SectionedRecyclerViewAdapter sectionAdapter, Context context) {
         Log.i(TAG, "<<<<<<<<<<<<  FETCHING HOME SCREEN DATA >>>>>>>>>>>>>");
         Map<String, Double> map = new HashMap<>();
         final AtomicInteger requests = new AtomicInteger(tickerSet.size());
@@ -290,7 +289,7 @@ public class StockAppClient {
                     map.put(ticker, summaryModel.getLastPrice());
                     int status = requests.decrementAndGet();
                     if (status == 0) {
-                        fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map);
+                        fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
                     }
                 }
 
@@ -300,14 +299,14 @@ public class StockAppClient {
                     Log.e(TAG, result);
                     int status = requests.decrementAndGet();
                     if (status == 0) {
-                        fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map);
+                        fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
                     }
                 }
-            });
+            }, context);
         }
     }
 
-    public void fetchAutoSuggestData(String searchString, AutoSuggestAdapter autoSuggestAdapter) {
+    public void fetchAutoSuggestData(String searchString, AutoSuggestAdapter autoSuggestAdapter, Context context) {
         String url = host + String.format(Constants.AUTOCOMPLETE_ENDPOINT_TEMPLATE, searchString);
         makeRequest(url, new VolleyCallback() {
             @Override
@@ -328,11 +327,12 @@ public class StockAppClient {
                 Log.e(TAG, "Error occurred while making request to backend: ");
                 Log.e(TAG, result);
             }
-        });
+        }, context);
     }
 
     public void fetchDetailScreenData(String ticker, ProgressBar progressBar, TextView loadingTextView,
-                                      NestedScrollView nestedScrollView, NewsAdapter newsAdapter, DetailScreenWrapperModel data) {
+                                      NestedScrollView nestedScrollView, NewsAdapter newsAdapter,
+                                      DetailScreenWrapperModel data, Context context) {
         String outlookUrl = host + String.format(Constants.OUTLOOK_ENDPOINT_TEMPLATE, ticker);
         String summaryUrl = host + String.format(Constants.SUMMARY_ENDPOINT_TEMPLATE, ticker);
         String newsUrl = host + String.format(Constants.NEWS_ENDPOINT_TEMPLATE, ticker);
@@ -346,7 +346,7 @@ public class StockAppClient {
                 data.setSummaryModel(summaryModel);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
                 }
             }
 
@@ -356,10 +356,10 @@ public class StockAppClient {
                 Log.e(TAG, result);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
                 }
             }
-        });
+        }, context);
 
         makeRequest(outlookUrl, new VolleyCallback() {
             @Override
@@ -368,7 +368,7 @@ public class StockAppClient {
                 data.setOutlookModel(outlookModel);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
                 }
             }
 
@@ -378,10 +378,10 @@ public class StockAppClient {
                 Log.e(TAG, result);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
                 }
             }
-        });
+        }, context);
 
         makeRequest(newsUrl, new VolleyCallback() {
             @Override
@@ -390,7 +390,7 @@ public class StockAppClient {
                 data.setNewsModel(newsModel);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
                 }
             }
 
@@ -400,9 +400,9 @@ public class StockAppClient {
                 Log.e(TAG, result);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
                 }
             }
-        });
+        }, context);
     }
 }

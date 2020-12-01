@@ -39,8 +39,8 @@ public class HomeScreenService implements Runnable {
 
     @Override
     public void run() {
-        StockAppClient.getInstance(applicationContext).fetchHomeScreenData(tickerSet,
-                progressBar, loadingTextView, recyclerView, sectionAdapter);
+        StockAppClient.getInstance().fetchHomeScreenData(tickerSet,
+                progressBar, loadingTextView, recyclerView, sectionAdapter, applicationContext);
         handler.postDelayed(this, 15000);
     }
 

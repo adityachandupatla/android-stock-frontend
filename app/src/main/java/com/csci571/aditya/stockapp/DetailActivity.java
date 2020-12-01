@@ -90,8 +90,8 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
         loadingTextView.setVisibility(View.VISIBLE);
 
         data = new DetailScreenWrapperModel();
-        StockAppClient.getInstance(getApplicationContext()).fetchDetailScreenData(ticker,
-                progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
+        StockAppClient.getInstance().fetchDetailScreenData(ticker,
+                progressBar, loadingTextView, nestedScrollView, newsAdapter, data, getApplicationContext());
     }
 
     public void showAlertDialogButtonClicked(View view) {
