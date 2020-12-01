@@ -1,7 +1,6 @@
 package com.csci571.aditya.stockapp.network;
 
 import android.content.Context;
-import android.os.Handler;
 import android.text.Layout;
 import android.util.Log;
 import android.view.View;
@@ -16,12 +15,14 @@ import com.csci571.aditya.stockapp.R;
 import com.csci571.aditya.stockapp.favorite.Favorite;
 import com.csci571.aditya.stockapp.favorite.FavoriteSection;
 import com.csci571.aditya.stockapp.localstorage.AppStorage;
+import com.csci571.aditya.stockapp.models.ArticleModel;
 import com.csci571.aditya.stockapp.models.AutoSuggestModel;
 import com.csci571.aditya.stockapp.models.DetailScreenWrapperModel;
 import com.csci571.aditya.stockapp.models.NewsModel;
 import com.csci571.aditya.stockapp.models.OutlookModel;
 import com.csci571.aditya.stockapp.models.Suggestion;
 import com.csci571.aditya.stockapp.models.SummaryModel;
+import com.csci571.aditya.stockapp.news.NewsAdapter;
 import com.csci571.aditya.stockapp.portfolio.Portfolio;
 import com.csci571.aditya.stockapp.portfolio.PortfolioSection;
 import com.csci571.aditya.stockapp.search.AutoSuggestAdapter;
@@ -31,7 +32,6 @@ import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -131,7 +131,7 @@ public class StockAppClient {
     }
 
     private void fillDetailScreen(ProgressBar progressBar, TextView loadingTextView,
-                                  NestedScrollView nestedScrollView, DetailScreenWrapperModel data) {
+                                  NestedScrollView nestedScrollView, NewsAdapter newsAdapter, DetailScreenWrapperModel data) {
 
         OutlookModel outlookModel = data.getOutlookModel();
         SummaryModel summaryModel = data.getSummaryModel();
@@ -268,6 +268,9 @@ public class StockAppClient {
         });
         webview.loadUrl(Constants.HIGHCHARTS_ASSET_PATH);
 
+        newsAdapter.setArticles(newsModel.getArticles());
+        newsAdapter.notifyDataSetChanged();
+
         progressBar.setVisibility(View.INVISIBLE);
         loadingTextView.setVisibility(View.INVISIBLE);
         nestedScrollView.setVisibility(View.VISIBLE);
@@ -329,7 +332,7 @@ public class StockAppClient {
     }
 
     public void fetchDetailScreenData(String ticker, ProgressBar progressBar, TextView loadingTextView,
-                                      NestedScrollView nestedScrollView, DetailScreenWrapperModel data) {
+                                      NestedScrollView nestedScrollView, NewsAdapter newsAdapter, DetailScreenWrapperModel data) {
         String outlookUrl = host + String.format(Constants.OUTLOOK_ENDPOINT_TEMPLATE, ticker);
         String summaryUrl = host + String.format(Constants.SUMMARY_ENDPOINT_TEMPLATE, ticker);
         String newsUrl = host + String.format(Constants.NEWS_ENDPOINT_TEMPLATE, ticker);
@@ -343,7 +346,7 @@ public class StockAppClient {
                 data.setSummaryModel(summaryModel);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
                 }
             }
 
@@ -353,7 +356,7 @@ public class StockAppClient {
                 Log.e(TAG, result);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
                 }
             }
         });
@@ -365,7 +368,7 @@ public class StockAppClient {
                 data.setOutlookModel(outlookModel);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
                 }
             }
 
@@ -375,7 +378,7 @@ public class StockAppClient {
                 Log.e(TAG, result);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
                 }
             }
         });
@@ -387,7 +390,7 @@ public class StockAppClient {
                 data.setNewsModel(newsModel);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
                 }
             }
 
@@ -397,7 +400,7 @@ public class StockAppClient {
                 Log.e(TAG, result);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, data);
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
                 }
             }
         });

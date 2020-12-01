@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
 import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +30,7 @@ import com.csci571.aditya.stockapp.localstorage.AppStorage;
 import com.csci571.aditya.stockapp.localstorage.FavoriteStorageModel;
 import com.csci571.aditya.stockapp.models.DetailScreenWrapperModel;
 import com.csci571.aditya.stockapp.network.StockAppClient;
+import com.csci571.aditya.stockapp.news.NewsAdapter;
 import com.csci571.aditya.stockapp.utils.Constants;
 import com.csci571.aditya.stockapp.utils.Parser;
 import com.google.android.material.appbar.AppBarLayout;
@@ -72,6 +75,13 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
         TextView loadingTextView = findViewById(R.id.detailLoadingText);
         NestedScrollView nestedScrollView = findViewById(R.id.nested_scroll_view);
 
+        NewsAdapter newsAdapter = new NewsAdapter();
+        RecyclerView newsRecyclerView = nestedScrollView.findViewById(R.id.news_recycler_view);
+        newsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        newsRecyclerView.setAdapter(newsAdapter);
+        newsRecyclerView.setNestedScrollingEnabled(false);
+        newsRecyclerView.setHasFixedSize(false);
+
         Button tradeButton = findViewById(R.id.tradeButton);
         tradeButton.setOnClickListener(this::showAlertDialogButtonClicked);
 
@@ -81,7 +91,7 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
 
         data = new DetailScreenWrapperModel();
         StockAppClient.getInstance(getApplicationContext()).fetchDetailScreenData(ticker,
-                progressBar, loadingTextView, nestedScrollView, data);
+                progressBar, loadingTextView, nestedScrollView, newsAdapter, data);
     }
 
     public void showAlertDialogButtonClicked(View view) {
