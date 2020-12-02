@@ -11,6 +11,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.csci571.aditya.stockapp.R;
 import com.csci571.aditya.stockapp.favorite.Favorite;
@@ -81,6 +82,9 @@ public class StockAppClient {
                 e.printStackTrace();
             }
         });
+
+        rq.setRetryPolicy(new DefaultRetryPolicy(50000, 5,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         // Request added to the RequestQueue
         VolleyController.getInstance(context).addToRequestQueue(rq);
