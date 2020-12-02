@@ -21,6 +21,18 @@ public class Parser {
         return formatter.format(val);
     }
 
+    public static String beautify(double val, int decimalPlaces) {
+        String prefix = "#,##0";
+        String suffix = "";
+        while (decimalPlaces != 0) {
+            suffix += "0";
+            decimalPlaces--;
+        }
+        String pattern = prefix + "." + suffix;
+        DecimalFormat formatter = new DecimalFormat(pattern);
+        return formatter.format(val);
+    }
+
     public static String urlEncode(String s) {
         try {
             return URLEncoder.encode(s, "UTF-8");
