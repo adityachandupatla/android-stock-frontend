@@ -96,6 +96,7 @@ public class StockAppClient {
             double currentStockPrice = 0;
             if (map.containsKey(portfolio.getTicker())) {
                 currentStockPrice = map.get(portfolio.getTicker());
+                AppStorage.setPortfolioStockPrice(context, portfolio.getTicker(), currentStockPrice);
             }
             else {
                 Log.e(TAG, "Unable to get currentStockPrice for the ticker: "
@@ -116,6 +117,7 @@ public class StockAppClient {
             double currentStockPrice = 0;
             if (map.containsKey(favorite.getTicker())) {
                 currentStockPrice = map.get(favorite.getTicker());
+                AppStorage.setFavoriteStockPrice(context, favorite.getTicker(), currentStockPrice);
             }
             else {
                 Log.e(TAG, "Unable to get currentStockPrice for the ticker: "

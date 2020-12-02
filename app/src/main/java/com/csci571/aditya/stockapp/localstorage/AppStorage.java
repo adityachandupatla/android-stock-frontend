@@ -251,6 +251,52 @@ public class AppStorage {
         return false;
     }
 
+    public static void setPortfolioStockPrice(Context context, String ticker, double stockPrice) {
+        SharedPreferences pref = context.getSharedPreferences(Constants.PORTFOLIO_PREF_NAME, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        ArrayList<PortfolioStorageModel> portfolioStorageModels = null;
+        String json = pref.getString(Constants.PORTFOLIO_KEY, "");
+        if (!json.equals("")) {
+            portfolioStorageModels = gson.fromJson(json, new TypeToken<ArrayList<PortfolioStorageModel>>(){}.getType());
+            for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
+                if (portfolioStorageModel.getStockTicker().equals(ticker)) {
+                    portfolioStorageModel.setStockPrice(stockPrice);
+                    break;
+                }
+            }
+
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString(Constants.PORTFOLIO_KEY, gson.toJson(portfolioStorageModels));
+            boolean commitResult = editor.commit();
+            if (!commitResult) {
+                Log.e(TAG, "Unable to commit the portfolio new stockPrice into sharedPreferences local storage");
+            }
+        }
+    }
+
+    public static void setFavoriteStockPrice(Context context, String ticker, double stockPrice) {
+        SharedPreferences pref = context.getSharedPreferences(Constants.FAVORITES_PREF_NAME, Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        ArrayList<FavoriteStorageModel> favoriteStorageModels = null;
+        String json = pref.getString(Constants.FAVORITES_KEY, "");
+        if (!json.equals("")) {
+            favoriteStorageModels = gson.fromJson(json, new TypeToken<ArrayList<FavoriteStorageModel>>(){}.getType());
+            for (FavoriteStorageModel favoriteStorageModel: favoriteStorageModels) {
+                if (favoriteStorageModel.getStockTicker().equals(ticker)) {
+                    favoriteStorageModel.setStockPrice(stockPrice);
+                    break;
+                }
+            }
+
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString(Constants.FAVORITES_KEY, gson.toJson(favoriteStorageModels));
+            boolean commitResult = editor.commit();
+            if (!commitResult) {
+                Log.e(TAG, "Unable to commit the favorite new stockPrice into sharedPreferences local storage");
+            }
+        }
+    }
+
     public static void updatePortfolioStock(Context context, String ticker, double newShares,
                                             double newStockPrice, boolean buy) {
         SharedPreferences pref = context.getSharedPreferences(Constants.PORTFOLIO_PREF_NAME, Context.MODE_PRIVATE);
