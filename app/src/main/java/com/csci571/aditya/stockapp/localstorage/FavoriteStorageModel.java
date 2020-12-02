@@ -4,11 +4,13 @@ public class FavoriteStorageModel {
     private String stockTicker;
     private String companyName;
     private double lastPrice;
+    private double stockPrice;
 
-    public FavoriteStorageModel(String stockTicker, String companyName, double lastPrice) {
+    public FavoriteStorageModel(String stockTicker, String companyName, double lastPrice, double stockPrice) {
         this.stockTicker = stockTicker;
         this.companyName = companyName;
         this.lastPrice = lastPrice;
+        this.stockPrice = stockPrice;
     }
 
     public String getStockTicker() {
@@ -35,12 +37,21 @@ public class FavoriteStorageModel {
         this.lastPrice = lastPrice;
     }
 
+    public double getStockPrice() {
+        return stockPrice;
+    }
+
+    public void setStockPrice(double stockPrice) {
+        this.stockPrice = stockPrice;
+    }
+
     @Override
     public String toString() {
         return "FavoriteStorageModel{" +
                 "stockTicker='" + stockTicker + '\'' +
                 ", companyName='" + companyName + '\'' +
                 ", lastPrice=" + lastPrice +
+                ", stockPrice=" + stockPrice +
                 '}';
     }
 }

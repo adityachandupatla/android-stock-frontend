@@ -4,11 +4,13 @@ public class PortfolioStorageModel {
     private String stockTicker;
     private double sharesOwned;
     private double totalAmount;
+    private double stockPrice;
 
-    public PortfolioStorageModel(String stockTicker, double sharesOwned, double totalAmount) {
+    public PortfolioStorageModel(String stockTicker, double sharesOwned, double totalAmount, double stockPrice) {
         this.stockTicker = stockTicker;
         this.sharesOwned = sharesOwned;
         this.totalAmount = totalAmount;
+        this.stockPrice = stockPrice;
     }
 
     public String getStockTicker() {
@@ -35,12 +37,21 @@ public class PortfolioStorageModel {
         this.totalAmount = totalAmount;
     }
 
+    public double getStockPrice() {
+        return stockPrice;
+    }
+
+    public void setStockPrice(double stockPrice) {
+        this.stockPrice = stockPrice;
+    }
+
     @Override
     public String toString() {
         return "PortfolioStorageModel{" +
                 "stockTicker='" + stockTicker + '\'' +
                 ", sharesOwned=" + sharesOwned +
                 ", totalAmount=" + totalAmount +
+                ", stockPrice=" + stockPrice +
                 '}';
     }
 }
