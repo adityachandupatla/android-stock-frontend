@@ -46,4 +46,5 @@ public class Constants {
     public static final String SHOW_MORE_MESSAGE = "Show more...";
     public static final String SHOW_LESS_MESSAGE = "Show less";
     public static final String TWITTER_URL = "https://twitter.com/intent/tweet?text=%s";
+    public static final float DEFAULT_UNINVESTED_AMOUNT = 20000;
 }

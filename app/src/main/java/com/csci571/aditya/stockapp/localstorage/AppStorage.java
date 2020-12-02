@@ -53,10 +53,20 @@ public class AppStorage {
 
     private static void fillNetWorthDefaults(SharedPreferences pref) {
         SharedPreferences.Editor editor = pref.edit();
-        editor.putFloat(Constants.UNINVESTED_KEY, 20000);
+        editor.putFloat(Constants.UNINVESTED_KEY, Constants.DEFAULT_UNINVESTED_AMOUNT);
         boolean commitResult = editor.commit();
         if (!commitResult) {
             Log.e(TAG, "Unable to commit the default net worth into sharedPreferences local storage");
+        }
+    }
+
+    private static void setUninvestedCash(Context context, double uninvestedCash) {
+        SharedPreferences pref = context.getSharedPreferences(Constants.UNINVESTED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putFloat(Constants.UNINVESTED_KEY, (float) uninvestedCash);
+        boolean commitResult = editor.commit();
+        if (!commitResult) {
+            Log.e(TAG, "Unable to commit uninvested cash into sharedPreferences local storage");
         }
     }
 
@@ -126,16 +136,6 @@ public class AppStorage {
         }
 
         return pref.getFloat(Constants.UNINVESTED_KEY, (float) 0.0);
-    }
-
-    private static void setUninvestedCash(Context context, double uninvestedCash) {
-        SharedPreferences pref = context.getSharedPreferences(Constants.UNINVESTED_PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putFloat(Constants.UNINVESTED_KEY, (float) uninvestedCash);
-        boolean commitResult = editor.commit();
-        if (!commitResult) {
-            Log.e(TAG, "Unable to commit uninvested cash into sharedPreferences local storage");
-        }
     }
 
     public static void removeFromFavorite(Context context, String ticker) {
@@ -261,26 +261,23 @@ public class AppStorage {
             double uninvestedCash = getUninvestedCash(context);
             double transactionValue = newShares * newStockPrice;
             boolean updated = false;
+            Log.i(TAG, "========== Previous uninvested cash: " + uninvestedCash + " ==========");
+            Log.i(TAG, "========== Transaction value: " + transactionValue +
+                    " computed as: " + newShares + " * " + newStockPrice + " ==========");
             for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
                 if (portfolioStorageModel.getStockTicker().equals(ticker)) {
-                    Log.i(TAG, "========== Transaction value: " + transactionValue +
-                            " computed as: " + newShares + " * " + newStockPrice + " ==========");
                     double prevSharesOwned = portfolioStorageModel.getSharesOwned();
                     double prevTotalAmount = portfolioStorageModel.getTotalAmount();
                     if (buy) {
-                        Log.i(TAG, "========== Previous uninvested cash: " + uninvestedCash + " ==========");
+                        Log.i(TAG, "========== Buying ==========");
                         setUninvestedCash(context, uninvestedCash - transactionValue);
-                        Log.i(TAG, "========== New uninvested cash: " + getUninvestedCash(context) + " ==========");
-
                         double newTotalAmount = prevTotalAmount + (newShares * newStockPrice);
                         portfolioStorageModel.setSharesOwned(prevSharesOwned + newShares);
                         portfolioStorageModel.setTotalAmount(newTotalAmount);
                     }
                     else {
-                        Log.i(TAG, "========== Previous uninvested cash: " + uninvestedCash + " ==========");
+                        Log.i(TAG, "========== Selling ==========");
                         setUninvestedCash(context, uninvestedCash + transactionValue);
-                        Log.i(TAG, "========== New uninvested cash: " + getUninvestedCash(context) + " ==========");
-
                         if (prevSharesOwned - newShares == 0) {
                             portfolioStorageModels.remove(portfolioStorageModel);
                         }
@@ -291,13 +288,14 @@ public class AppStorage {
                             portfolioStorageModel.setTotalAmount(newTotalAmount);
                         }
                     }
+                    Log.i(TAG, "========== New uninvested cash: " + getUninvestedCash(context) + " ==========");
                     updated = true;
                     break;
                 }
             }
 
             if (!updated && buy) {
-                Log.i(TAG, "========== Previous uninvested cash: " + uninvestedCash + " ==========");
+                Log.i(TAG, "========== Buying ==========");
                 setUninvestedCash(context, uninvestedCash - transactionValue);
                 Log.i(TAG, "========== New uninvested cash: " + getUninvestedCash(context) + " ==========");
                 PortfolioStorageModel portfolioStorageModel = new PortfolioStorageModel(ticker, newShares,
@@ -309,7 +307,7 @@ public class AppStorage {
             editor.putString(Constants.PORTFOLIO_KEY, gson.toJson(portfolioStorageModels));
             boolean commitResult = editor.commit();
             if (!commitResult) {
-                Log.e(TAG, "Unable to commit the new portfolio order into sharedPreferences local storage");
+                Log.e(TAG, "Unable to commit the new portfolio after transaction into sharedPreferences local storage");
             }
         }
     }
