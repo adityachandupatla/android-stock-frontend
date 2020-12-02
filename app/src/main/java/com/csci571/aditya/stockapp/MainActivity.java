@@ -11,7 +11,6 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -31,13 +30,9 @@ import com.csci571.aditya.stockapp.portfolio.PortfolioSection;
 import com.csci571.aditya.stockapp.search.SearchMain;
 import com.csci571.aditya.stockapp.swipedrag.SwipeDragCallback;
 import com.csci571.aditya.stockapp.utils.Constants;
-import com.csci571.aditya.stockapp.utils.Parser;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -96,6 +91,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        PortfolioSection portfolioSection = (PortfolioSection) sectionAdapter.getSection(Constants.PORTFOLIO_SECTION_TAG);
+        ArrayList<PortfolioStorageModel> portfolioStorageModels = AppStorage.getPortfolio(getApplicationContext());
+        List<Portfolio> portfolioList = new ArrayList<>();
+        for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
+            portfolioList.add(new Portfolio(portfolioStorageModel.getStockTicker(),
+                    portfolioStorageModel.getSharesOwned(), portfolioStorageModel.getTotalAmount(),
+                    portfolioStorageModel.getStockPrice()));
+        }
+        portfolioSection.setList(portfolioList);
+
+        FavoriteSection favoriteSection = (FavoriteSection) sectionAdapter.getSection(Constants.FAVORITE_SECTION_TAG);
+        ArrayList<FavoriteStorageModel> favoriteStorageModels = AppStorage.getFavorites(getApplicationContext());
+        List<Favorite> favoriteList = new ArrayList<>();
+        for (FavoriteStorageModel favoriteStorageModel: favoriteStorageModels) {
+            double shares = favoriteSection.getSharesOfFavoriteStock(favoriteStorageModel.getStockTicker(),
+                    portfolioStorageModels);
+            favoriteList.add(new Favorite(favoriteStorageModel.getStockTicker(), shares, favoriteStorageModel.getCompanyName(),
+                    favoriteStorageModel.getLastPrice(), favoriteStorageModel.getStockPrice()));
+        }
+        favoriteSection.setList(favoriteList);
+
         handler.post(homeScreenService);
     }
 
