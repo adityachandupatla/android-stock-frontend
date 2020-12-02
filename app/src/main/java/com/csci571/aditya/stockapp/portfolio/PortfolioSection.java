@@ -82,7 +82,8 @@ public class PortfolioSection extends Section {
     }
 
     private String buildSharesText(double shares) {
-        return Parser.beautify(shares) + " shares";
+        String suffix = shares <= 1 ? " share" : " shares";
+        return Parser.beautify(shares) + suffix;
     }
 
     @Override

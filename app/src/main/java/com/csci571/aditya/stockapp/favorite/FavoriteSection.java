@@ -75,7 +75,9 @@ public class FavoriteSection extends Section {
             return favorite.getCompanyName();
         }
         else {
-            return Parser.beautify(favorite.getShares()) + " shares";
+            double shares = favorite.getShares();
+            String suffix = shares <= 1 ? " share" : " shares";
+            return Parser.beautify(shares) + suffix;
         }
     }
 
