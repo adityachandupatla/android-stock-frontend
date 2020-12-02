@@ -113,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
         }
         favoriteSection.setList(favoriteList);
 
+        sectionAdapter.notifyDataSetChanged();
+
         handler.post(homeScreenService);
     }
 
