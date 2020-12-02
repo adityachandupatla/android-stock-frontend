@@ -13,7 +13,6 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="20dp"
-        android:maxWidth="350dp"
         android:text="@string/sample_dialog_header"
         android:textColor="@color/black"
         android:textSize="20sp"
@@ -91,12 +90,14 @@
         android:id="@+id/shares_compute_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxWidth="300dp"
+        android:layout_marginStart="80dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:text="@string/sample_share_compute_text"
         android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.84"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/share_val_textfield" />
 </androidx.constraintlayout.widget.ConstraintLayout>
