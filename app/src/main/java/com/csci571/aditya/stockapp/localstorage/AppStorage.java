@@ -351,6 +351,16 @@ public class AppStorage {
                 break;
             }
         }
+
+        if (!updated && buy) {
+            Log.i(TAG, "========== Buying ==========");
+            setUninvestedCash(context, uninvestedCash - transactionValue);
+            Log.i(TAG, "========== New uninvested cash: " + getUninvestedCash(context) + " ==========");
+            PortfolioStorageModel portfolioStorageModel = new PortfolioStorageModel(ticker, newShares,
+                    newShares * newStockPrice, newStockPrice);
+            portfolioStorageModels.add(portfolioStorageModel);
+        }
+
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(Constants.PORTFOLIO_KEY, gson.toJson(portfolioStorageModels));
         boolean commitResult = editor.commit();
