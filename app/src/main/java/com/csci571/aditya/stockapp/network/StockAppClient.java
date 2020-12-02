@@ -386,24 +386,15 @@ public class StockAppClient {
         makeRequest(detailsUrl, new VolleyCallback() {
             @Override
             public void onSuccess(JSONObject result) {
-                Map<String, Object> response;
+                DetailScreenWrapperModel response;
                 try {
-                    response = new Gson().fromJson(result.toString(), new TypeToken<Map<String, Object>>(){}.getType());
-                    if (response.containsKey(Constants.SUMMARY_DETAIL_RESPONSE)) {
-                        SummaryModel summaryModel = (SummaryModel) response.get(Constants.SUMMARY_DETAIL_RESPONSE);
-                        data.setSummaryModel(summaryModel);
-                    }
-                    if (response.containsKey(Constants.OUTLOOK_DETAIL_RESPONSE)) {
-                        OutlookModel outlookModel = (OutlookModel) response.get(Constants.OUTLOOK_DETAIL_RESPONSE);
-                        data.setOutlookModel(outlookModel);
-                    }
-                    if (response.containsKey(Constants.NEWS_DETAIL_RESPONSE)) {
-                        NewsModel newsModel = (NewsModel) response.get(Constants.NEWS_DETAIL_RESPONSE);
-                        data.setNewsModel(newsModel);
-                    }
+                    response = new Gson().fromJson(result.toString(), DetailScreenWrapperModel.class);
+                    data.setSummaryModel(response.getSummaryModel());
+                    data.setOutlookModel(response.getOutlookModel());
+                    data.setNewsModel(response.getNewsModel());
                 } catch(JsonSyntaxException e) {
                     Log.e(TAG, "Request: " + detailsUrl + " returned: " + result.toString() +
-                            " which is not parsable into Map<String, Object>");
+                            " which is not parsable into DetailScreenWrapperModel");
                 } finally {
                     fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
                 }
