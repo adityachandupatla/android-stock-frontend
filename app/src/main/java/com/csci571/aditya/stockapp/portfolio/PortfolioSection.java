@@ -119,7 +119,7 @@ public class PortfolioSection extends Section {
             }
         }
 
-        itemHolder.getDetailArrowImageView().setOnClickListener(v ->
+        itemHolder.itemView.setOnClickListener(v ->
                 onItemRootViewClicked(portfolio.getTicker())
         );
     }

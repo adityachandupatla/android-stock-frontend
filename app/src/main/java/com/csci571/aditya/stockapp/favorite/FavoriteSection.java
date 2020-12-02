@@ -126,7 +126,7 @@ public class FavoriteSection extends Section {
             }
         }
 
-        itemHolder.getDetailArrowImageView().setOnClickListener(v ->
+        itemHolder.itemView.setOnClickListener(v ->
                 onItemRootViewClicked(favorite.getTicker())
         );
     }
