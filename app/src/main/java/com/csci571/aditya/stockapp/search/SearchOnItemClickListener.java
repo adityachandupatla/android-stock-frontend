@@ -23,10 +23,12 @@ public class SearchOnItemClickListener implements AdapterView.OnItemClickListene
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int itemIndex, long id) {
         String queryString = (String) adapterView.getItemAtPosition(itemIndex);
-        String ticker = queryString.split("-")[0].trim();
-        searchAutoComplete.setText(queryString);
-        Intent myIntent = new Intent(context, DetailActivity.class);
-        myIntent.putExtra(Constants.INTENT_TICKER_EXTRA, ticker);
-        context.startActivity(myIntent);
+        if (queryString == null || queryString.length() == 0 || queryString.indexOf('-') != -1) {
+            String ticker = queryString.split("-")[0].trim();
+            searchAutoComplete.setText(queryString);
+            Intent myIntent = new Intent(context, DetailActivity.class);
+            myIntent.putExtra(Constants.INTENT_TICKER_EXTRA, ticker);
+            context.startActivity(myIntent);
+        }
     }
 }
