@@ -299,7 +299,7 @@ public class AppStorage {
                 setUninvestedCash(context, uninvestedCash - transactionValue);
                 Log.i(TAG, "========== New uninvested cash: " + getUninvestedCash(context) + " ==========");
                 PortfolioStorageModel portfolioStorageModel = new PortfolioStorageModel(ticker, newShares,
-                        newShares * newStockPrice);
+                        newShares * newStockPrice, newStockPrice);
                 portfolioStorageModels.add(portfolioStorageModel);
             }
 
