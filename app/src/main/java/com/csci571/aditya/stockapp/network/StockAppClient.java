@@ -25,6 +25,7 @@ import com.csci571.aditya.stockapp.models.NewsModel;
 import com.csci571.aditya.stockapp.models.OutlookModel;
 import com.csci571.aditya.stockapp.models.Suggestion;
 import com.csci571.aditya.stockapp.models.SummaryModel;
+import com.csci571.aditya.stockapp.models.SummaryWrapperModel;
 import com.csci571.aditya.stockapp.news.NewsAdapter;
 import com.csci571.aditya.stockapp.portfolio.Portfolio;
 import com.csci571.aditya.stockapp.portfolio.PortfolioSection;
@@ -321,10 +322,10 @@ public class StockAppClient {
             makeRequest(url, new VolleyCallback() {
                 @Override
                 public void onSuccess(JSONObject result) {
-                    ArrayList<SummaryModel> summaryModels;
+                    SummaryWrapperModel summaryWrapperModel;
                     try {
-                        summaryModels = new Gson().fromJson(result.toString(), new TypeToken<ArrayList<SummaryModel>>(){}.getType());
-                        for (SummaryModel summaryModel: summaryModels) {
+                        summaryWrapperModel = new Gson().fromJson(result.toString(), SummaryWrapperModel.class);
+                        for (SummaryModel summaryModel: summaryWrapperModel.getData()) {
                             map.put(summaryModel.getStockTickerSymbol(), summaryModel.getLastPrice());
                         }
                     } catch(JsonSyntaxException e) {
