@@ -1,6 +1,5 @@
 package com.csci571.aditya.stockapp;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,15 +8,10 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +27,6 @@ import com.csci571.aditya.stockapp.network.StockAppClient;
 import com.csci571.aditya.stockapp.news.NewsAdapter;
 import com.csci571.aditya.stockapp.utils.Constants;
 import com.csci571.aditya.stockapp.utils.Parser;
-import com.google.android.material.appbar.AppBarLayout;
 
 public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
     private final String TAG = "com.csci571.aditya.stockapp.DetailActivity";
@@ -269,7 +262,7 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
                 String companyName = data.getOutlookModel().getCompanyName();
                 double lastPrice = data.getSummaryModel().getLastPrice();
                 FavoriteStorageModel favoriteStorageModel = new FavoriteStorageModel(ticker, companyName,
-                        lastPrice);
+                        lastPrice, lastPrice);
                 AppStorage.addToFavorite(getApplicationContext(), favoriteStorageModel);
                 Toast.makeText(this, "\"" + ticker + "\" was added to favorites",
                         Toast.LENGTH_SHORT).show();
