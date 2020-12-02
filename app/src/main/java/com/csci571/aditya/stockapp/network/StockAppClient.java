@@ -17,6 +17,7 @@ import com.csci571.aditya.stockapp.R;
 import com.csci571.aditya.stockapp.favorite.Favorite;
 import com.csci571.aditya.stockapp.favorite.FavoriteSection;
 import com.csci571.aditya.stockapp.localstorage.AppStorage;
+import com.csci571.aditya.stockapp.localstorage.FavoriteStorageModel;
 import com.csci571.aditya.stockapp.models.ArticleModel;
 import com.csci571.aditya.stockapp.models.AutoSuggestModel;
 import com.csci571.aditya.stockapp.models.DetailScreenWrapperModel;
@@ -32,6 +33,7 @@ import com.csci571.aditya.stockapp.utils.Constants;
 import com.csci571.aditya.stockapp.utils.Parser;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -310,38 +312,36 @@ public class StockAppClient {
         Map<String, Double> map = new HashMap<>();
         if (tickerSet.size() > 0) {
             Log.i(TAG, "<<<<<<<<<<<<  FETCHING HOME SCREEN DATA >>>>>>>>>>>>>");
-            final AtomicInteger requests = new AtomicInteger(tickerSet.size());
+            String tickers = "";
             for (String ticker: tickerSet) {
-                String url = host + String.format(Constants.SUMMARY_ENDPOINT_TEMPLATE, ticker);
-                makeRequest(url, new VolleyCallback() {
-                    @Override
-                    public void onSuccess(JSONObject result) {
-                        SummaryModel summaryModel;
-                        try {
-                            summaryModel = new Gson().fromJson(result.toString(), SummaryModel.class);
-                            map.put(ticker, summaryModel.getLastPrice());
-                        } catch(JsonSyntaxException e) {
-                            Log.e(TAG, "Request: " + url + " returned: " + result.toString() +
-                                    " which is not parsable into SummaryModel");
-                        } finally {
-                            int status = requests.decrementAndGet();
-                            if (status == 0) {
-                                fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(String result) {
-                        Log.e(TAG, "Error occurred while making request: " + url + " to backend: ");
-                        Log.e(TAG, result);
-                        int status = requests.decrementAndGet();
-                        if (status == 0) {
-                            fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
-                        }
-                    }
-                }, context);
+                tickers += ticker + ",";
             }
+            tickers.substring(0, tickers.length() - 1);
+            String url = host + String.format(Constants.SUMMARY_WRAPPER_ENDPOINT_TEMPLATE, tickers);
+            makeRequest(url, new VolleyCallback() {
+                @Override
+                public void onSuccess(JSONObject result) {
+                    ArrayList<SummaryModel> summaryModels;
+                    try {
+                        summaryModels = new Gson().fromJson(result.toString(), new TypeToken<ArrayList<SummaryModel>>(){}.getType());
+                        for (SummaryModel summaryModel: summaryModels) {
+                            map.put(summaryModel.getStockTickerSymbol(), summaryModel.getLastPrice());
+                        }
+                    } catch(JsonSyntaxException e) {
+                        Log.e(TAG, "Request: " + url + " returned: " + result.toString() +
+                                " which is not parsable into ArrayList<SummaryModel>");
+                    } finally {
+                        fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
+                    }
+                }
+
+                @Override
+                public void onError(String result) {
+                    Log.e(TAG, "Error occurred while making request: " + url + " to backend: ");
+                    Log.e(TAG, result);
+                    fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
+                }
+            }, context);
         }
         else {
             fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
@@ -381,96 +381,39 @@ public class StockAppClient {
     public void fetchDetailScreenData(String ticker, ProgressBar progressBar, TextView loadingTextView,
                                       NestedScrollView nestedScrollView, NewsAdapter newsAdapter,
                                       DetailScreenWrapperModel data, Context context) {
-        String outlookUrl = host + String.format(Constants.OUTLOOK_ENDPOINT_TEMPLATE, ticker);
-        String summaryUrl = host + String.format(Constants.SUMMARY_ENDPOINT_TEMPLATE, ticker);
-        String newsUrl = host + String.format(Constants.NEWS_ENDPOINT_TEMPLATE, ticker);
+        String detailsUrl = host + String.format(Constants.DETAILS_ENDPOINT_TEMPLATE, ticker);
 
-        final AtomicInteger requests = new AtomicInteger(Constants.DETAIL_SCREEN_REQUESTS);
-
-        makeRequest(summaryUrl, new VolleyCallback() {
+        makeRequest(detailsUrl, new VolleyCallback() {
             @Override
             public void onSuccess(JSONObject result) {
-                SummaryModel summaryModel;
+                Map<String, Object> response;
                 try {
-                    summaryModel = new Gson().fromJson(result.toString(), SummaryModel.class);
-                    data.setSummaryModel(summaryModel);
+                    response = new Gson().fromJson(result.toString(), new TypeToken<Map<String, Object>>(){}.getType());
+                    if (response.containsKey(Constants.SUMMARY_DETAIL_RESPONSE)) {
+                        SummaryModel summaryModel = (SummaryModel) response.get(Constants.SUMMARY_DETAIL_RESPONSE);
+                        data.setSummaryModel(summaryModel);
+                    }
+                    if (response.containsKey(Constants.OUTLOOK_DETAIL_RESPONSE)) {
+                        OutlookModel outlookModel = (OutlookModel) response.get(Constants.OUTLOOK_DETAIL_RESPONSE);
+                        data.setOutlookModel(outlookModel);
+                    }
+                    if (response.containsKey(Constants.NEWS_DETAIL_RESPONSE)) {
+                        NewsModel newsModel = (NewsModel) response.get(Constants.NEWS_DETAIL_RESPONSE);
+                        data.setNewsModel(newsModel);
+                    }
                 } catch(JsonSyntaxException e) {
-                    Log.e(TAG, "Request: " + summaryUrl + " returned: " + result.toString() +
-                            " which is not parsable into SummaryModel");
+                    Log.e(TAG, "Request: " + detailsUrl + " returned: " + result.toString() +
+                            " which is not parsable into Map<String, Object>");
                 } finally {
-                    int status = requests.decrementAndGet();
-                    if (status == 0) {
-                        fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
-                    }
+                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
                 }
             }
 
             @Override
             public void onError(String result) {
-                Log.e(TAG, "Error occurred while making request: " + summaryUrl + " to backend: ");
+                Log.e(TAG, "Error occurred while making request: " + detailsUrl + " to backend: ");
                 Log.e(TAG, result);
-                int status = requests.decrementAndGet();
-                if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
-                }
-            }
-        }, context);
-
-        makeRequest(outlookUrl, new VolleyCallback() {
-            @Override
-            public void onSuccess(JSONObject result) {
-                OutlookModel outlookModel;
-                try {
-                    outlookModel = new Gson().fromJson(result.toString(), OutlookModel.class);
-                    data.setOutlookModel(outlookModel);
-                } catch (JsonSyntaxException e) {
-                    Log.e(TAG, "Request: " + outlookUrl + " returned: " + result.toString() +
-                            " which is not parsable into OutlookModel");
-                } finally {
-                    int status = requests.decrementAndGet();
-                    if (status == 0) {
-                        fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
-                    }
-                }
-            }
-
-            @Override
-            public void onError(String result) {
-                Log.e(TAG, "Error occurred while making request: " + outlookUrl + " to backend: ");
-                Log.e(TAG, result);
-                int status = requests.decrementAndGet();
-                if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
-                }
-            }
-        }, context);
-
-        makeRequest(newsUrl, new VolleyCallback() {
-            @Override
-            public void onSuccess(JSONObject result) {
-                NewsModel newsModel;
-                try {
-                    newsModel = new Gson().fromJson(result.toString(), NewsModel.class);
-                    data.setNewsModel(newsModel);
-                } catch (JsonSyntaxException e) {
-                    Log.e(TAG, "Request: " + newsUrl + " returned: " + result.toString() +
-                            " which is not parsable into NewsModel");
-                } finally {
-                    int status = requests.decrementAndGet();
-                    if (status == 0) {
-                        fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
-                    }
-                }
-            }
-
-            @Override
-            public void onError(String result) throws Exception {
-                Log.e(TAG, "Error occurred while making request: " + newsUrl + " to backend: ");
-                Log.e(TAG, result);
-                int status = requests.decrementAndGet();
-                if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
-                }
+                fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
             }
         }, context);
     }
