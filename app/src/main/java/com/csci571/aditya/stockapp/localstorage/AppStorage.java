@@ -307,59 +307,55 @@ public class AppStorage {
         SharedPreferences pref = context.getSharedPreferences(Constants.PORTFOLIO_PREF_NAME, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = pref.getString(Constants.PORTFOLIO_KEY, "");
+        ArrayList<PortfolioStorageModel> portfolioStorageModels;
         if (!json.equals("")) {
-            ArrayList<PortfolioStorageModel> portfolioStorageModels = gson.fromJson(json, new TypeToken<ArrayList<PortfolioStorageModel>>(){}.getType());
-            double uninvestedCash = getUninvestedCash(context);
-            double transactionValue = newShares * newStockPrice;
-            boolean updated = false;
-            Log.i(TAG, "========== Previous uninvested cash: " + uninvestedCash + " ==========");
-            Log.i(TAG, "========== Transaction value: " + transactionValue +
-                    " computed as: " + newShares + " * " + newStockPrice + " ==========");
-            for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
-                if (portfolioStorageModel.getStockTicker().equals(ticker)) {
-                    double prevSharesOwned = portfolioStorageModel.getSharesOwned();
-                    double prevTotalAmount = portfolioStorageModel.getTotalAmount();
-                    if (buy) {
-                        Log.i(TAG, "========== Buying ==========");
-                        setUninvestedCash(context, uninvestedCash - transactionValue);
-                        double newTotalAmount = prevTotalAmount + (newShares * newStockPrice);
-                        portfolioStorageModel.setSharesOwned(prevSharesOwned + newShares);
-                        portfolioStorageModel.setTotalAmount(newTotalAmount);
+            portfolioStorageModels = gson.fromJson(json, new TypeToken<ArrayList<PortfolioStorageModel>>(){}.getType());
+        }
+        else {
+            portfolioStorageModels = new ArrayList<>();
+            PortfolioStorageModel portfolioStorageModel = new PortfolioStorageModel(ticker, 0, 0, newStockPrice);
+            portfolioStorageModels.add(portfolioStorageModel);
+        }
+        double uninvestedCash = getUninvestedCash(context);
+        double transactionValue = newShares * newStockPrice;
+        boolean updated = false;
+        Log.i(TAG, "========== Previous uninvested cash: " + uninvestedCash + " ==========");
+        Log.i(TAG, "========== Transaction value: " + transactionValue +
+                " computed as: " + newShares + " * " + newStockPrice + " ==========");
+        for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
+            if (portfolioStorageModel.getStockTicker().equals(ticker)) {
+                double prevSharesOwned = portfolioStorageModel.getSharesOwned();
+                double prevTotalAmount = portfolioStorageModel.getTotalAmount();
+                if (buy) {
+                    Log.i(TAG, "========== Buying ==========");
+                    setUninvestedCash(context, uninvestedCash - transactionValue);
+                    double newTotalAmount = prevTotalAmount + (newShares * newStockPrice);
+                    portfolioStorageModel.setSharesOwned(prevSharesOwned + newShares);
+                    portfolioStorageModel.setTotalAmount(newTotalAmount);
+                }
+                else {
+                    Log.i(TAG, "========== Selling ==========");
+                    setUninvestedCash(context, uninvestedCash + transactionValue);
+                    if (prevSharesOwned - newShares == 0) {
+                        portfolioStorageModels.remove(portfolioStorageModel);
                     }
                     else {
-                        Log.i(TAG, "========== Selling ==========");
-                        setUninvestedCash(context, uninvestedCash + transactionValue);
-                        if (prevSharesOwned - newShares == 0) {
-                            portfolioStorageModels.remove(portfolioStorageModel);
-                        }
-                        else {
-                            double avgPricePerStock = prevTotalAmount / prevSharesOwned;
-                            double newTotalAmount = prevTotalAmount - (newShares * avgPricePerStock);
-                            portfolioStorageModel.setSharesOwned(prevSharesOwned - newShares);
-                            portfolioStorageModel.setTotalAmount(newTotalAmount);
-                        }
+                        double avgPricePerStock = prevTotalAmount / prevSharesOwned;
+                        double newTotalAmount = prevTotalAmount - (newShares * avgPricePerStock);
+                        portfolioStorageModel.setSharesOwned(prevSharesOwned - newShares);
+                        portfolioStorageModel.setTotalAmount(newTotalAmount);
                     }
-                    Log.i(TAG, "========== New uninvested cash: " + getUninvestedCash(context) + " ==========");
-                    updated = true;
-                    break;
                 }
-            }
-
-            if (!updated && buy) {
-                Log.i(TAG, "========== Buying ==========");
-                setUninvestedCash(context, uninvestedCash - transactionValue);
                 Log.i(TAG, "========== New uninvested cash: " + getUninvestedCash(context) + " ==========");
-                PortfolioStorageModel portfolioStorageModel = new PortfolioStorageModel(ticker, newShares,
-                        newShares * newStockPrice, newStockPrice);
-                portfolioStorageModels.add(portfolioStorageModel);
+                updated = true;
+                break;
             }
-
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString(Constants.PORTFOLIO_KEY, gson.toJson(portfolioStorageModels));
-            boolean commitResult = editor.commit();
-            if (!commitResult) {
-                Log.e(TAG, "Unable to commit the new portfolio after transaction into sharedPreferences local storage");
-            }
+        }
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(Constants.PORTFOLIO_KEY, gson.toJson(portfolioStorageModels));
+        boolean commitResult = editor.commit();
+        if (!commitResult) {
+            Log.e(TAG, "Unable to commit the new portfolio after transaction into sharedPreferences local storage");
         }
     }
 }
