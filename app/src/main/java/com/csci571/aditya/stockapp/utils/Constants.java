@@ -27,17 +27,17 @@ public class Constants {
 
     // Default portfolio
     public static final String PORTFOLIO_SECTION_TAG = "PortfolioTag";
-    public static PortfolioStorageModel MICROSOFT_PORTFOLIO = new PortfolioStorageModel("MSFT", 8.0, 1619.76);
-    public static PortfolioStorageModel GOOGLE_PORTFOLIO = new PortfolioStorageModel("GOOGL", 5.0, 8080.55);
-    public static PortfolioStorageModel APPLE_PORTFOLIO = new PortfolioStorageModel("AAPL", 5.0, 544.3);
-    public static PortfolioStorageModel TESLA_PORTFOLIO = new PortfolioStorageModel("TSLA", 3.0, 1164.12);
+    public static PortfolioStorageModel MICROSOFT_PORTFOLIO = new PortfolioStorageModel("MSFT", 8.0, 1619.76, 216.21);
+    public static PortfolioStorageModel GOOGLE_PORTFOLIO = new PortfolioStorageModel("GOOGL", 5.0, 8080.55, 1795.36);
+    public static PortfolioStorageModel APPLE_PORTFOLIO = new PortfolioStorageModel("AAPL", 5.0, 544.3, 122.72);
+    public static PortfolioStorageModel TESLA_PORTFOLIO = new PortfolioStorageModel("TSLA", 3.0, 1164.12, 584.76);
 
     // Default favorites
     public static final String FAVORITE_SECTION_TAG = "FavoriteTag";
-    public static FavoriteStorageModel NETFLIX_FAVORITE = new FavoriteStorageModel("NFLX", "NetFlix Inc", 491.36);
-    public static FavoriteStorageModel GOOGLE_FAVORITE = new FavoriteStorageModel("GOOGL", "Alphabet Inc - Class A", 1787.02);
-    public static FavoriteStorageModel APPLE_FAVORITE = new FavoriteStorageModel("AAPL", "Apple Inc", 116.59);
-    public static FavoriteStorageModel TESLA_FAVORITE = new FavoriteStorageModel("TSLA", "Tesla Inc", 585.76);
+    public static FavoriteStorageModel NETFLIX_FAVORITE = new FavoriteStorageModel("NFLX", "NetFlix Inc", 491.36, 504.58);
+    public static FavoriteStorageModel GOOGLE_FAVORITE = new FavoriteStorageModel("GOOGL", "Alphabet Inc - Class A", 1787.02, 1795.36);
+    public static FavoriteStorageModel APPLE_FAVORITE = new FavoriteStorageModel("AAPL", "Apple Inc", 116.59, 122.72);
+    public static FavoriteStorageModel TESLA_FAVORITE = new FavoriteStorageModel("TSLA", "Tesla Inc", 585.76, 584.76);
 
     // Misc
     public static final String INTENT_TICKER_EXTRA = "IntentTicker";
