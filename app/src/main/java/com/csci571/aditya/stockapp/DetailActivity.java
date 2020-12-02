@@ -125,8 +125,8 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
                         }
                     }
                 }
-                String sharesComputeString = Parser.beautify(shares) +
-                        " x $" + Parser.beautify(lastPrice) + "/share = $" + Parser.beautify(total);
+                String sharesComputeString = Parser.beautify(shares, 4) +
+                        " x $" + Parser.beautify(lastPrice) + "/share = $" + Parser.beautify(total, 4);
                 sharesComputeTextview.setText(sharesComputeString);
             }
 
@@ -165,9 +165,9 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
                         AppStorage.updatePortfolioStock(getApplicationContext(), ticker, buyShares,
                                 newStockPrice, true);
 
-                        String sharesOwnedText = "Shares Owned: " + Parser.beautify(newShares);
+                        String sharesOwnedText = "Shares Owned: " + Parser.beautify(newShares, 4);
                         sharesOwnedTextView.setText(sharesOwnedText);
-                        String marketValueText = "Market Value: " + Parser.beautify(newMarketValue);
+                        String marketValueText = "Market Value: " + Parser.beautify(newMarketValue, 4);
                         marketValueTextView.setText(marketValueText);
                         dialog.dismiss();
                         showSuccessDialog("You have successfully bought " + buyShares + " shares of " + ticker);
@@ -213,8 +213,8 @@ public class DetailActivity extends AppCompatActivity implements Toolbar.OnMenuI
                             marketValueText = "Start trading!";
                         }
                         else {
-                            sharesOwnedText = "Shares Owned: " + Parser.beautify(newShares);
-                            marketValueText = "Market Value: " + Parser.beautify(newMarketValue);
+                            sharesOwnedText = "Shares Owned: " + Parser.beautify(newShares, 4);
+                            marketValueText = "Market Value: " + Parser.beautify(newMarketValue, 4);
                         }
                         sharesOwnedTextView.setText(sharesOwnedText);
                         marketValueTextView.setText(marketValueText);
