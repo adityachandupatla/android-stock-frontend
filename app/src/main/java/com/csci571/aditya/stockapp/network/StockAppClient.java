@@ -308,7 +308,7 @@ public class StockAppClient {
             String url = host + String.format(Constants.SUMMARY_ENDPOINT_TEMPLATE, ticker);
             makeRequest(url, new VolleyCallback() {
                 @Override
-                public void onSuccess(JSONObject result) throws JSONException {
+                public void onSuccess(JSONObject result) {
                     SummaryModel summaryModel;
                     try {
                         summaryModel = new Gson().fromJson(result.toString(), SummaryModel.class);
@@ -325,7 +325,7 @@ public class StockAppClient {
                 }
 
                 @Override
-                public void onError(String result) throws Exception {
+                public void onError(String result) {
                     Log.e(TAG, "Error occurred while making request: " + url + " to backend: ");
                     Log.e(TAG, result);
                     int status = requests.decrementAndGet();
@@ -341,7 +341,7 @@ public class StockAppClient {
         String url = host + String.format(Constants.AUTOCOMPLETE_ENDPOINT_TEMPLATE, searchString);
         makeRequest(url, new VolleyCallback() {
             @Override
-            public void onSuccess(JSONObject result) throws JSONException {
+            public void onSuccess(JSONObject result) {
                 AutoSuggestModel autoSuggestModel;
                 try {
                     autoSuggestModel = new Gson().fromJson(result.toString(), AutoSuggestModel.class);
@@ -360,7 +360,7 @@ public class StockAppClient {
             }
 
             @Override
-            public void onError(String result) throws Exception {
+            public void onError(String result) {
                 Log.e(TAG, "Error occurred while making request: " + url + " to backend: ");
                 Log.e(TAG, result);
             }
@@ -378,7 +378,7 @@ public class StockAppClient {
 
         makeRequest(summaryUrl, new VolleyCallback() {
             @Override
-            public void onSuccess(JSONObject result) throws JSONException {
+            public void onSuccess(JSONObject result) {
                 SummaryModel summaryModel;
                 try {
                     summaryModel = new Gson().fromJson(result.toString(), SummaryModel.class);
@@ -395,7 +395,7 @@ public class StockAppClient {
             }
 
             @Override
-            public void onError(String result) throws Exception {
+            public void onError(String result) {
                 Log.e(TAG, "Error occurred while making request: " + summaryUrl + " to backend: ");
                 Log.e(TAG, result);
                 int status = requests.decrementAndGet();
@@ -407,7 +407,7 @@ public class StockAppClient {
 
         makeRequest(outlookUrl, new VolleyCallback() {
             @Override
-            public void onSuccess(JSONObject result) throws JSONException {
+            public void onSuccess(JSONObject result) {
                 OutlookModel outlookModel;
                 try {
                     outlookModel = new Gson().fromJson(result.toString(), OutlookModel.class);
@@ -424,7 +424,7 @@ public class StockAppClient {
             }
 
             @Override
-            public void onError(String result) throws Exception {
+            public void onError(String result) {
                 Log.e(TAG, "Error occurred while making request: " + outlookUrl + " to backend: ");
                 Log.e(TAG, result);
                 int status = requests.decrementAndGet();
@@ -436,7 +436,7 @@ public class StockAppClient {
 
         makeRequest(newsUrl, new VolleyCallback() {
             @Override
-            public void onSuccess(JSONObject result) throws JSONException {
+            public void onSuccess(JSONObject result) {
                 NewsModel newsModel;
                 try {
                     newsModel = new Gson().fromJson(result.toString(), NewsModel.class);
