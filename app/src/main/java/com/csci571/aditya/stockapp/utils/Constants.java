@@ -19,11 +19,15 @@ public class Constants {
     public static final String HOST = PROD_HOST;
     public static final String OUTLOOK_ENDPOINT_TEMPLATE = "/stock/api/v1.0/outlook/%s";
     public static final String SUMMARY_ENDPOINT_TEMPLATE = "/stock/api/v1.0/summary/%s";
+    public static final String SUMMARY_WRAPPER_ENDPOINT_TEMPLATE = "/stock/api/v1.0/summary?tickers=%s";
     public static final String HISTORICAL_ENDPOINT_TEMPLATE = "/stock/api/v1.0/historical/%s";
-    public static final String DAILY_ENDPOINT_TEMPLATE = "/stock/api/v1.0/daily/%s?startDate=%s&resampleFreq=4min";
+    public static final String DETAILS_ENDPOINT_TEMPLATE = "/stock/api/v1.0/details/%s";
     public static final String AUTOCOMPLETE_ENDPOINT_TEMPLATE = "/stock/api/v1.0/search?query=%s";
     public static final String NEWS_ENDPOINT_TEMPLATE = "/stock/api/v1.0/news/%s";
     public static final int DETAIL_SCREEN_REQUESTS = 3;
+    public static final String OUTLOOK_DETAIL_RESPONSE = "outlook";
+    public static final String SUMMARY_DETAIL_RESPONSE = "summary";
+    public static final String NEWS_DETAIL_RESPONSE = "news";
 
     // Default portfolio
     public static final String PORTFOLIO_SECTION_TAG = "PortfolioTag";
