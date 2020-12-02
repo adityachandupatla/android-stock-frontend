@@ -1,5 +1,6 @@
 package com.csci571.aditya.stockapp.network;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Layout;
 import android.util.Log;
@@ -29,6 +30,7 @@ import com.csci571.aditya.stockapp.search.AutoSuggestAdapter;
 import com.csci571.aditya.stockapp.utils.Constants;
 import com.csci571.aditya.stockapp.utils.Parser;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,15 +93,19 @@ public class StockAppClient {
         List<Portfolio> portfolioList = portfolioSection.getList();
         double stockWorth = 0;
         for (Portfolio portfolio: portfolioList) {
+            double currentStockPrice = 0;
             if (map.containsKey(portfolio.getTicker())) {
-                double currentStockPrice = map.get(portfolio.getTicker());
-                double averagePriceOfStockOwned = portfolio.getTotalAmountOwned() / portfolio.getShares();
-                double changePercentage = currentStockPrice - averagePriceOfStockOwned;
-                portfolio.setStockPrice(currentStockPrice);
-                portfolio.setChangePercentage(changePercentage);
-                portfolio.updateChangeImage();
-                stockWorth += currentStockPrice * portfolio.getShares();
+                currentStockPrice = map.get(portfolio.getTicker());
             }
+            else {
+                Log.e(TAG, "Unable to get currentStockPrice for the ticker: "
+                        + portfolio.getTicker() + " using currentStockPrice as 0");
+            }
+            double averagePriceOfStockOwned = portfolio.getTotalAmountOwned() / portfolio.getShares();
+            double changePercentage = currentStockPrice - averagePriceOfStockOwned;
+            portfolio.setStockPrice(currentStockPrice);
+            portfolio.setChangePercentage(changePercentage);
+            stockWorth += currentStockPrice * portfolio.getShares();
         }
         double uninvestedCash = AppStorage.getUninvestedCash(context);
         portfolioSection.setNetWorth(Parser.beautify(uninvestedCash + stockWorth));
@@ -107,13 +113,17 @@ public class StockAppClient {
         FavoriteSection favoriteSection = (FavoriteSection) sectionAdapter.getSection(Constants.FAVORITE_SECTION_TAG);
         List<Favorite> favoriteList = favoriteSection.getList();
         for (Favorite favorite: favoriteList) {
+            double currentStockPrice = 0;
             if (map.containsKey(favorite.getTicker())) {
-                double currentStockPrice = map.get(favorite.getTicker());
-                double changePercentage = currentStockPrice - favorite.getLastPrice();
-                favorite.setStockPrice(currentStockPrice);
-                favorite.setChangePercentage(changePercentage);
-                favorite.updateChangeImage();
+                currentStockPrice = map.get(favorite.getTicker());
             }
+            else {
+                Log.e(TAG, "Unable to get currentStockPrice for the ticker: "
+                        + favorite.getTicker() + " using currentStockPrice as 0");
+            }
+            double changePercentage = currentStockPrice - favorite.getLastPrice();
+            favorite.setStockPrice(currentStockPrice);
+            favorite.setChangePercentage(changePercentage);
         }
 
         sectionAdapter.notifyDataSetChanged();
@@ -127,12 +137,22 @@ public class StockAppClient {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private void fillDetailScreen(ProgressBar progressBar, TextView loadingTextView,
                                   NestedScrollView nestedScrollView, NewsAdapter newsAdapter,
                                   DetailScreenWrapperModel data, Context context) {
 
         OutlookModel outlookModel = data.getOutlookModel();
+        if (outlookModel == null) {
+            outlookModel = new OutlookModel();
+            outlookModel.setCompanyName("No company");
+            outlookModel.setStockTickerSymbol("");
+            outlookModel.setDescription("No description");
+        }
         SummaryModel summaryModel = data.getSummaryModel();
+        if (summaryModel == null) {
+            summaryModel = new SummaryModel();
+        }
         NewsModel newsModel = data.getNewsModel();
 
         String ticker = outlookModel.getStockTickerSymbol();
@@ -167,7 +187,7 @@ public class StockAppClient {
 
         TextView sharesOwnedTextView = nestedScrollView.findViewById(R.id.sharesOwnedTextView);
         TextView marketValueTextView = nestedScrollView.findViewById(R.id.marketValueTextView);
-        double sharesOwned = AppStorage.getSharesOwned(context, ticker);
+        double sharesOwned = ticker.length() > 0 ? AppStorage.getSharesOwned(context, ticker) : 0;
         String sharesOwnedDisplayText;
         String marketValueDisplayText;
         if (sharesOwned > 0) {
@@ -249,25 +269,29 @@ public class StockAppClient {
             }
         });
 
-        WebView webview = nestedScrollView.findViewById(R.id.highcharts_webview);
-        webview.getSettings().setJavaScriptEnabled(true);
-        webview.clearCache(true);
-        webview.getSettings().setDomStorageEnabled(true);
-        String historicalUrl = host + String.format(Constants.HISTORICAL_ENDPOINT_TEMPLATE, ticker);
-        String jsUrl = String.format(Constants.JS_FUNCTION_BUILDER_TEMPLATE, historicalUrl, ticker);
-        webview.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                if (url.equals(Constants.HIGHCHARTS_ASSET_PATH)) {
-                    webview.loadUrl(jsUrl);
+        if (ticker.length() > 0) {
+            WebView webview = nestedScrollView.findViewById(R.id.highcharts_webview);
+            webview.getSettings().setJavaScriptEnabled(true);
+            webview.clearCache(true);
+            webview.getSettings().setDomStorageEnabled(true);
+            String historicalUrl = host + String.format(Constants.HISTORICAL_ENDPOINT_TEMPLATE, ticker);
+            String jsUrl = String.format(Constants.JS_FUNCTION_BUILDER_TEMPLATE, historicalUrl, ticker);
+            webview.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    super.onPageFinished(view, url);
+                    if (url.equals(Constants.HIGHCHARTS_ASSET_PATH)) {
+                        webview.loadUrl(jsUrl);
+                    }
                 }
-            }
-        });
-        webview.loadUrl(Constants.HIGHCHARTS_ASSET_PATH);
+            });
+            webview.loadUrl(Constants.HIGHCHARTS_ASSET_PATH);
+        }
 
-        newsAdapter.setArticles(newsModel.getArticles());
-        newsAdapter.notifyDataSetChanged();
+        if (newsModel != null && newsModel.getArticles() != null && newsModel.getArticles().size() > 0) {
+            newsAdapter.setArticles(newsModel.getArticles());
+            newsAdapter.notifyDataSetChanged();
+        }
 
         progressBar.setVisibility(View.INVISIBLE);
         loadingTextView.setVisibility(View.INVISIBLE);
@@ -285,17 +309,24 @@ public class StockAppClient {
             makeRequest(url, new VolleyCallback() {
                 @Override
                 public void onSuccess(JSONObject result) throws JSONException {
-                    SummaryModel summaryModel = new Gson().fromJson(result.toString(), SummaryModel.class);
-                    map.put(ticker, summaryModel.getLastPrice());
-                    int status = requests.decrementAndGet();
-                    if (status == 0) {
-                        fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
+                    SummaryModel summaryModel;
+                    try {
+                        summaryModel = new Gson().fromJson(result.toString(), SummaryModel.class);
+                        map.put(ticker, summaryModel.getLastPrice());
+                    } catch(JsonSyntaxException e) {
+                        Log.e(TAG, "Request: " + url + " returned: " + result.toString() +
+                                " which is not parsable into SummaryModel");
+                    } finally {
+                        int status = requests.decrementAndGet();
+                        if (status == 0) {
+                            fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
+                        }
                     }
                 }
 
                 @Override
                 public void onError(String result) throws Exception {
-                    Log.e(TAG, "Error occurred while making request to backend: ");
+                    Log.e(TAG, "Error occurred while making request: " + url + " to backend: ");
                     Log.e(TAG, result);
                     int status = requests.decrementAndGet();
                     if (status == 0) {
@@ -311,20 +342,26 @@ public class StockAppClient {
         makeRequest(url, new VolleyCallback() {
             @Override
             public void onSuccess(JSONObject result) throws JSONException {
-                AutoSuggestModel autoSuggestModel = new Gson().fromJson(result.toString(), AutoSuggestModel.class);
-                if (autoSuggestModel.isSuccess() && autoSuggestModel.getData().size() > 0) {
-                    List<String> data = new ArrayList<>();
-                    for (Suggestion suggestion: autoSuggestModel.getData()) {
-                        data.add(suggestion.getTicker() + " - " + suggestion.getName());
+                AutoSuggestModel autoSuggestModel;
+                try {
+                    autoSuggestModel = new Gson().fromJson(result.toString(), AutoSuggestModel.class);
+                    if (autoSuggestModel.isSuccess() && autoSuggestModel.getData().size() > 0) {
+                        List<String> data = new ArrayList<>();
+                        for (Suggestion suggestion: autoSuggestModel.getData()) {
+                            data.add(suggestion.getTicker() + " - " + suggestion.getName());
+                        }
+                        autoSuggestAdapter.setData(data);
+                        autoSuggestAdapter.notifyDataSetChanged();
                     }
-                    autoSuggestAdapter.setData(data);
-                    autoSuggestAdapter.notifyDataSetChanged();
+                } catch (JsonSyntaxException e) {
+                    Log.e(TAG, "Request: " + url + " returned: " + result.toString() +
+                            " which is not parsable into AutoSuggestModel");
                 }
             }
 
             @Override
             public void onError(String result) throws Exception {
-                Log.e(TAG, "Error occurred while making request to backend: ");
+                Log.e(TAG, "Error occurred while making request: " + url + " to backend: ");
                 Log.e(TAG, result);
             }
         }, context);
@@ -342,17 +379,24 @@ public class StockAppClient {
         makeRequest(summaryUrl, new VolleyCallback() {
             @Override
             public void onSuccess(JSONObject result) throws JSONException {
-                SummaryModel summaryModel = new Gson().fromJson(result.toString(), SummaryModel.class);
-                data.setSummaryModel(summaryModel);
-                int status = requests.decrementAndGet();
-                if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
+                SummaryModel summaryModel;
+                try {
+                    summaryModel = new Gson().fromJson(result.toString(), SummaryModel.class);
+                    data.setSummaryModel(summaryModel);
+                } catch(JsonSyntaxException e) {
+                    Log.e(TAG, "Request: " + summaryUrl + " returned: " + result.toString() +
+                            " which is not parsable into SummaryModel");
+                } finally {
+                    int status = requests.decrementAndGet();
+                    if (status == 0) {
+                        fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
+                    }
                 }
             }
 
             @Override
             public void onError(String result) throws Exception {
-                Log.e(TAG, "Error occurred while making request to backend: ");
+                Log.e(TAG, "Error occurred while making request: " + summaryUrl + " to backend: ");
                 Log.e(TAG, result);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
@@ -364,17 +408,24 @@ public class StockAppClient {
         makeRequest(outlookUrl, new VolleyCallback() {
             @Override
             public void onSuccess(JSONObject result) throws JSONException {
-                OutlookModel outlookModel = new Gson().fromJson(result.toString(), OutlookModel.class);
-                data.setOutlookModel(outlookModel);
-                int status = requests.decrementAndGet();
-                if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
+                OutlookModel outlookModel;
+                try {
+                    outlookModel = new Gson().fromJson(result.toString(), OutlookModel.class);
+                    data.setOutlookModel(outlookModel);
+                } catch (JsonSyntaxException e) {
+                    Log.e(TAG, "Request: " + outlookUrl + " returned: " + result.toString() +
+                            " which is not parsable into OutlookModel");
+                } finally {
+                    int status = requests.decrementAndGet();
+                    if (status == 0) {
+                        fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
+                    }
                 }
             }
 
             @Override
             public void onError(String result) throws Exception {
-                Log.e(TAG, "Error occurred while making request to backend: ");
+                Log.e(TAG, "Error occurred while making request: " + outlookUrl + " to backend: ");
                 Log.e(TAG, result);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
@@ -386,17 +437,24 @@ public class StockAppClient {
         makeRequest(newsUrl, new VolleyCallback() {
             @Override
             public void onSuccess(JSONObject result) throws JSONException {
-                NewsModel newsModel = new Gson().fromJson(result.toString(), NewsModel.class);
-                data.setNewsModel(newsModel);
-                int status = requests.decrementAndGet();
-                if (status == 0) {
-                    fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
+                NewsModel newsModel;
+                try {
+                    newsModel = new Gson().fromJson(result.toString(), NewsModel.class);
+                    data.setNewsModel(newsModel);
+                } catch (JsonSyntaxException e) {
+                    Log.e(TAG, "Request: " + newsUrl + " returned: " + result.toString() +
+                            " which is not parsable into NewsModel");
+                } finally {
+                    int status = requests.decrementAndGet();
+                    if (status == 0) {
+                        fillDetailScreen(progressBar, loadingTextView, nestedScrollView, newsAdapter, data, context);
+                    }
                 }
             }
 
             @Override
             public void onError(String result) throws Exception {
-                Log.e(TAG, "Error occurred while making request to backend: ");
+                Log.e(TAG, "Error occurred while making request: " + newsUrl + " to backend: ");
                 Log.e(TAG, result);
                 int status = requests.decrementAndGet();
                 if (status == 0) {
