@@ -161,17 +161,22 @@ public class AppStorage {
 
     public static void addToFavorite(Context context, FavoriteStorageModel newFavoriteStorageModel) {
         SharedPreferences pref = context.getSharedPreferences(Constants.FAVORITES_PREF_NAME, Context.MODE_PRIVATE);
+        ArrayList<FavoriteStorageModel> favoriteStorageModels;
         Gson gson = new Gson();
         String json = pref.getString(Constants.FAVORITES_KEY, "");
         if (!json.equals("")) {
-            ArrayList<FavoriteStorageModel> favoriteStorageModels = gson.fromJson(json, new TypeToken<ArrayList<FavoriteStorageModel>>(){}.getType());
+            favoriteStorageModels = gson.fromJson(json, new TypeToken<ArrayList<FavoriteStorageModel>>(){}.getType());
             favoriteStorageModels.add(newFavoriteStorageModel);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString(Constants.FAVORITES_KEY, gson.toJson(favoriteStorageModels));
-            boolean commitResult = editor.commit();
-            if (!commitResult) {
-                Log.e(TAG, "Unable to commit the new favorites into sharedPreferences local storage");
-            }
+        }
+        else {
+            favoriteStorageModels = new ArrayList<>();
+            favoriteStorageModels.add(newFavoriteStorageModel);
+        }
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(Constants.FAVORITES_KEY, gson.toJson(favoriteStorageModels));
+        boolean commitResult = editor.commit();
+        if (!commitResult) {
+            Log.e(TAG, "Unable to commit the new favorites into sharedPreferences local storage");
         }
     }
 
