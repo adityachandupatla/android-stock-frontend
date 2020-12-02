@@ -46,7 +46,7 @@ public class FavoriteSection extends Section {
             double shares = getSharesOfFavoriteStock(favoriteStorageModel.getStockTicker(),
                     AppStorage.getPortfolio(applicationContext));
             favList.add(new Favorite(favoriteStorageModel.getStockTicker(), shares, favoriteStorageModel.getCompanyName(),
-                    favoriteStorageModel.getLastPrice()));
+                    favoriteStorageModel.getLastPrice(), favoriteStorageModel.getStockPrice()));
         }
 
         this.list = favList;
@@ -79,7 +79,7 @@ public class FavoriteSection extends Section {
         }
     }
 
-    private double getSharesOfFavoriteStock(String stockTicker, ArrayList<PortfolioStorageModel> portfolioStorageModels) {
+    public double getSharesOfFavoriteStock(String stockTicker, ArrayList<PortfolioStorageModel> portfolioStorageModels) {
         for (PortfolioStorageModel portfolioStorageModel: portfolioStorageModels) {
             if (portfolioStorageModel.getStockTicker().equals(stockTicker)) {
                 return portfolioStorageModel.getSharesOwned();

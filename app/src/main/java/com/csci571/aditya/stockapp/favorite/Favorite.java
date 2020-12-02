@@ -20,19 +20,17 @@ public class Favorite {
     private int changeImage;
 
 
-    public Favorite(String ticker, double shares, String companyName, double lastPrice) {
+    public Favorite(String ticker, double shares, String companyName, double lastPrice, double stockPrice) {
         this.ticker = ticker;
         this.shares = shares;
         this.companyName = companyName;
         this.lastPrice = lastPrice;
+        this.stockPrice = stockPrice;
+
+        this.changePercentage = stockPrice - lastPrice;
+        updateChangeImage();
 
         this.detailArrowImage = R.drawable.ic_baseline_keyboard_arrow_right_24;
-
-        // These are default values
-        this.stockPrice = 0;
-        this.changePercentage = 0;
-        this.change = Change.SAME;
-        this.changeImage = -1;
     }
 
     private void updateChangeImage() {
