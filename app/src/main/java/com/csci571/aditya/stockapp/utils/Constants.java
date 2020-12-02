@@ -16,7 +16,7 @@ public class Constants {
     // Constants related to network calls
     public static final String DEVELOPMENT_HOST = "http://10.0.2.2:8080";
     public static final String PROD_HOST = "https://android-node-backend.wl.r.appspot.com";
-    public static final String HOST = DEVELOPMENT_HOST;
+    public static final String HOST = PROD_HOST;
     public static final String OUTLOOK_ENDPOINT_TEMPLATE = "/stock/api/v1.0/outlook/%s";
     public static final String SUMMARY_ENDPOINT_TEMPLATE = "/stock/api/v1.0/summary/%s";
     public static final String HISTORICAL_ENDPOINT_TEMPLATE = "/stock/api/v1.0/historical/%s";
