@@ -17,7 +17,6 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 
 public class HomeScreenService implements Runnable {
 
-    private HashSet<String> tickerSet;
     private ProgressBar progressBar;
     private TextView loadingTextView;
     private RecyclerView recyclerView;
@@ -28,7 +27,6 @@ public class HomeScreenService implements Runnable {
     public HomeScreenService(ProgressBar progressBar, TextView loadingTextView,
                              RecyclerView recyclerView, SectionedRecyclerViewAdapter sectionAdapter,
                              Context applicationContext, Handler handler) {
-        this.tickerSet = uniqueTickers(AppStorage.getPortfolio(applicationContext), AppStorage.getFavorites(applicationContext));
         this.progressBar = progressBar;
         this.loadingTextView = loadingTextView;
         this.recyclerView = recyclerView;
@@ -39,6 +37,7 @@ public class HomeScreenService implements Runnable {
 
     @Override
     public void run() {
+        HashSet<String> tickerSet = uniqueTickers(AppStorage.getPortfolio(applicationContext), AppStorage.getFavorites(applicationContext));
         StockAppClient.getInstance().fetchHomeScreenData(tickerSet,
                 progressBar, loadingTextView, recyclerView, sectionAdapter, applicationContext);
         handler.postDelayed(this, 15000);
