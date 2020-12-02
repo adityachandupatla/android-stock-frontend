@@ -307,39 +307,44 @@ public class StockAppClient {
     public void fetchHomeScreenData(HashSet<String> tickerSet, ProgressBar progressBar,
                                     TextView loadingTextView, RecyclerView recyclerView,
                                     SectionedRecyclerViewAdapter sectionAdapter, Context context) {
-        Log.i(TAG, "<<<<<<<<<<<<  FETCHING HOME SCREEN DATA >>>>>>>>>>>>>");
         Map<String, Double> map = new HashMap<>();
-        final AtomicInteger requests = new AtomicInteger(tickerSet.size());
-        for (String ticker: tickerSet) {
-            String url = host + String.format(Constants.SUMMARY_ENDPOINT_TEMPLATE, ticker);
-            makeRequest(url, new VolleyCallback() {
-                @Override
-                public void onSuccess(JSONObject result) {
-                    SummaryModel summaryModel;
-                    try {
-                        summaryModel = new Gson().fromJson(result.toString(), SummaryModel.class);
-                        map.put(ticker, summaryModel.getLastPrice());
-                    } catch(JsonSyntaxException e) {
-                        Log.e(TAG, "Request: " + url + " returned: " + result.toString() +
-                                " which is not parsable into SummaryModel");
-                    } finally {
+        if (tickerSet.size() > 0) {
+            Log.i(TAG, "<<<<<<<<<<<<  FETCHING HOME SCREEN DATA >>>>>>>>>>>>>");
+            final AtomicInteger requests = new AtomicInteger(tickerSet.size());
+            for (String ticker: tickerSet) {
+                String url = host + String.format(Constants.SUMMARY_ENDPOINT_TEMPLATE, ticker);
+                makeRequest(url, new VolleyCallback() {
+                    @Override
+                    public void onSuccess(JSONObject result) {
+                        SummaryModel summaryModel;
+                        try {
+                            summaryModel = new Gson().fromJson(result.toString(), SummaryModel.class);
+                            map.put(ticker, summaryModel.getLastPrice());
+                        } catch(JsonSyntaxException e) {
+                            Log.e(TAG, "Request: " + url + " returned: " + result.toString() +
+                                    " which is not parsable into SummaryModel");
+                        } finally {
+                            int status = requests.decrementAndGet();
+                            if (status == 0) {
+                                fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(String result) {
+                        Log.e(TAG, "Error occurred while making request: " + url + " to backend: ");
+                        Log.e(TAG, result);
                         int status = requests.decrementAndGet();
                         if (status == 0) {
                             fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
                         }
                     }
-                }
-
-                @Override
-                public void onError(String result) {
-                    Log.e(TAG, "Error occurred while making request: " + url + " to backend: ");
-                    Log.e(TAG, result);
-                    int status = requests.decrementAndGet();
-                    if (status == 0) {
-                        fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
-                    }
-                }
-            }, context);
+                }, context);
+            }
+        }
+        else {
+            fillHomeScreen(progressBar, loadingTextView, recyclerView, sectionAdapter, map, context);
         }
     }
 
