@@ -35,7 +35,7 @@ public class Favorite {
         this.changeImage = -1;
     }
 
-    public void updateChangeImage() {
+    private void updateChangeImage() {
         if (changePercentage > 0) {
             this.change = Change.INCREASE;
             this.changeImage = R.drawable.ic_twotone_trending_up_24;
@@ -80,6 +80,7 @@ public class Favorite {
 
     public void setChangePercentage(double changePercentage) {
         this.changePercentage = changePercentage;
+        updateChangeImage();
     }
 
     public Change getChange() {
