@@ -73,15 +73,15 @@ public class AppStorage {
     public static ArrayList<PortfolioStorageModel>  getPortfolio(Context context) {
         SharedPreferences pref = context.getSharedPreferences(Constants.PORTFOLIO_PREF_NAME, Context.MODE_PRIVATE);
 
-        if (!pref.getBoolean(Constants.APP_FIRST_TIME, false)) {
-            fillPortfolioDefaults(pref);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putBoolean(Constants.APP_FIRST_TIME, true);
-            boolean commitResult = editor.commit();
-            if (!commitResult) {
-                Log.e(TAG, "Unable to commit the " + Constants.APP_FIRST_TIME + " flag into sharedPreferences local storage");
-            }
-        }
+//        if (!pref.getBoolean(Constants.APP_FIRST_TIME, false)) {
+//            fillPortfolioDefaults(pref);
+//            SharedPreferences.Editor editor = pref.edit();
+//            editor.putBoolean(Constants.APP_FIRST_TIME, true);
+//            boolean commitResult = editor.commit();
+//            if (!commitResult) {
+//                Log.e(TAG, "Unable to commit the " + Constants.APP_FIRST_TIME + " flag into sharedPreferences local storage");
+//            }
+//        }
 
         Gson gson = new Gson();
         ArrayList<PortfolioStorageModel> portfolioStorageModels = null;
@@ -99,15 +99,15 @@ public class AppStorage {
     public static ArrayList<FavoriteStorageModel>  getFavorites(Context context) {
         SharedPreferences pref = context.getSharedPreferences(Constants.FAVORITES_PREF_NAME, Context.MODE_PRIVATE);
 
-        if (!pref.getBoolean(Constants.APP_FIRST_TIME, false)) {
-            fillFavoritesDefaults(pref);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putBoolean(Constants.APP_FIRST_TIME, true);
-            boolean commitResult = editor.commit();
-            if (!commitResult) {
-                Log.e(TAG, "Unable to commit the " + Constants.APP_FIRST_TIME + " flag into sharedPreferences local storage");
-            }
-        }
+//        if (!pref.getBoolean(Constants.APP_FIRST_TIME, false)) {
+//            fillFavoritesDefaults(pref);
+//            SharedPreferences.Editor editor = pref.edit();
+//            editor.putBoolean(Constants.APP_FIRST_TIME, true);
+//            boolean commitResult = editor.commit();
+//            if (!commitResult) {
+//                Log.e(TAG, "Unable to commit the " + Constants.APP_FIRST_TIME + " flag into sharedPreferences local storage");
+//            }
+//        }
 
         Gson gson = new Gson();
         ArrayList<FavoriteStorageModel> favoriteStorageModels = null;
