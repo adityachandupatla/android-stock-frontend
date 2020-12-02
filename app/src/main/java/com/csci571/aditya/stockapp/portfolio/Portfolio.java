@@ -24,7 +24,8 @@ public class Portfolio {
         this.totalAmountOwned = totalAmountOwned;
         this.stockPrice = stockPrice;
 
-        this.changePercentage = stockPrice - (totalAmountOwned / shares);
+        double val = stockPrice - (totalAmountOwned / shares);
+        this.changePercentage = Math.round(val * 100.0) / 100.0;
         updateChangeImage();
 
         this.detailArrowImage = R.drawable.ic_baseline_keyboard_arrow_right_24;
@@ -74,7 +75,7 @@ public class Portfolio {
     }
 
     public void setChangePercentage(double changePercentage) {
-        this.changePercentage = changePercentage;
+        this.changePercentage = Math.round(changePercentage * 100.0) / 100.0;
         updateChangeImage();
     }
 

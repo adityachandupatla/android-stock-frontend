@@ -27,7 +27,8 @@ public class Favorite {
         this.lastPrice = lastPrice;
         this.stockPrice = stockPrice;
 
-        this.changePercentage = stockPrice - lastPrice;
+        double val = stockPrice - lastPrice;
+        this.changePercentage = Math.round(val * 100.0) / 100.0;
         updateChangeImage();
 
         this.detailArrowImage = R.drawable.ic_baseline_keyboard_arrow_right_24;
@@ -77,7 +78,7 @@ public class Favorite {
     }
 
     public void setChangePercentage(double changePercentage) {
-        this.changePercentage = changePercentage;
+        this.changePercentage = Math.round(changePercentage * 100.0) / 100.0;
         updateChangeImage();
     }
 
